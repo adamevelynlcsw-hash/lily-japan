@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lily's Japan Trip</title>
+<meta name="theme-color" content="#e8566b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23fff4ef'/%3E%3Ccircle cx='32' cy='30' r='14' fill='%23e8566b'/%3E%3C/svg%3E">
+<style>
+:root{--pink:#e8566b;--pink2:#f7a1b0;--blush:#fff4ef;--ink:#2b2335;--mute:#6f6578;--line:#eadfe3;--card:#fff;--indigo:#3b4a7a;--matcha:#7aa35a;--gold:#e9b44c}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Zen Maru Gothic",system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--blush);line-height:1.45}
+a{color:var(--indigo)}
+.hero{position:relative;overflow:hidden;background:linear-gradient(#ffd9df,#fff4ef)}
+.hero svg{display:block;width:100%;height:auto;max-height:230px}
+.hero h1{position:absolute;left:0;right:0;top:10px;margin:0;text-align:center;font-size:clamp(26px,6vw,42px);color:var(--ink);letter-spacing:.5px;text-shadow:0 2px 0 #fff}
+.hero p{position:absolute;left:0;right:0;top:clamp(46px,10vw,62px);margin:0;text-align:center;font-size:14px;color:var(--mute)}
+.petal{position:absolute;top:-20px;width:12px;height:9px;background:var(--pink2);border-radius:12px 0 12px 0;opacity:.85;animation:fall linear infinite;pointer-events:none}
+@keyframes fall{to{transform:translate(-60px,260px) rotate(320deg);opacity:0}}
+@media (prefers-reduced-motion:reduce){.petal{display:none}}
+nav{position:sticky;top:0;z-index:5;display:flex;gap:4px;overflow-x:auto;background:#fff;border-bottom:2px solid var(--line);padding:6px}
+nav button{flex:0 0 auto;border:0;background:none;padding:8px 12px;border-radius:999px;font:inherit;font-size:14px;color:var(--mute);cursor:pointer}
+nav button.on{background:var(--pink);color:#fff}
+main{max-width:980px;margin:0 auto;padding:14px}
+section{display:none}section.on{display:block}
+h2{margin:6px 0 10px;font-size:22px}h3{margin:18px 0 8px;font-size:17px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+input,select,textarea{font:inherit;font-size:15px;padding:9px 10px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);max-width:100%}
+input[type=search]{flex:1 1 260px}
+textarea{width:100%;min-height:60px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;position:relative}
+.card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card h4{margin:0;font-size:16px}
+.meta{font-size:12px;color:var(--mute)}
+.tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;color:#fff;margin-right:4px}
+.Tokyo{background:var(--pink)}.Kyoto{background:var(--matcha)}.Osaka{background:var(--indigo)}.Anywhere{background:var(--gold)}
+.order{font-size:13px;background:#fff7e8;border-radius:8px;padding:6px 8px}
+.card .acts{display:flex;gap:8px;margin-top:auto;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer;background:var(--pink);color:#fff;text-decoration:none;display:inline-block}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.small{padding:5px 9px;font-size:13px}
+.btn.saved{background:var(--matcha)}
+.count{font-size:13px;color:var(--mute);margin:4px 0 10px}
+.box{background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.warn{background:#fff1f1;border-color:#f3c2c2}
+.note{font-size:13px;color:var(--mute)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+th{font-size:12px;color:var(--mute);text-transform:uppercase}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1 1 150px}
+.day{border-left:4px solid var(--pink2);padding:6px 10px;margin:8px 0;background:#fff;border-radius:0 12px 12px 0}
+.day b{display:block}
+ul.clean{list-style:none;padding:0;margin:0}
+ul.clean li{padding:6px 0;border-bottom:1px dashed var(--line);display:flex;gap:8px;align-items:center}
+pre.prompt{white-space:pre-wrap;background:#2b2335;color:#ffe9ee;border-radius:12px;padding:12px;font-size:13px;max-height:300px;overflow:auto}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:9px 14px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+#toast.show{opacity:1}
+.empty{text-align:center;padding:24px;color:var(--mute)}
+.mascot{width:70px;height:70px;float:right;margin:0 0 6px 10px}
+footer{text-align:center;font-size:12px;color:var(--mute);padding:20px}
+</style>
+</head>
+<body>
+<header class="hero" id="hero">
+<svg viewBox="0 0 800 230" aria-hidden="true">
+ <defs><linearGradient id="sky" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffd2da"/><stop offset="1" stop-color="#fff4ef"/></linearGradient></defs>
+ <rect width="800" height="230" fill="url(#sky)"/>
+ <circle cx="640" cy="95" r="42" fill="#e8566b" opacity=".9"/>
+ <path d="M250 230 L400 92 Q410 84 420 92 L570 230 Z" fill="#8fa6d6"/>
+ <path d="M372 118 L400 92 Q410 84 420 92 L448 118 Q436 128 426 118 Q416 132 404 118 Q392 130 384 118 Q378 126 372 118Z" fill="#fff"/>
+ <g fill="#3b4a7a" opacity=".85"><rect x="90" y="120" width="6" height="110"/>
+ <path d="M60 135h66l-8 10H68z"/><path d="M64 160h58l-7 9H71z"/><path d="M68 183h50l-6 8H74z"/><path d="M72 204h42l-5 8H77z"/><rect x="88" y="100" width="10" height="22"/></g>
+ <g fill="#d64545"><rect x="630" y="150" width="9" height="80"/><rect x="700" y="150" width="9" height="80"/><path d="M612 138 Q670 128 728 138 L724 148 Q670 140 616 148Z"/><rect x="622" y="158" width="96" height="7"/><rect x="664" y="148" width="9" height="12"/></g>
+ <path d="M0 215 Q200 195 400 215 T800 212 V230 H0Z" fill="#c9e3b4"/>
+ <path d="M0 40 Q60 55 120 48 Q170 42 210 60" stroke="#6b4a3a" stroke-width="6" fill="none"/>
+ <g fill="#f7a1b0"><circle cx="40" cy="44" r="10"/><circle cx="78" cy="56" r="12"/><circle cx="120" cy="45" r="10"/><circle cx="160" cy="52" r="11"/><circle cx="200" cy="60" r="9"/><circle cx="58" cy="30" r="8"/><circle cx="140" cy="34" r="8"/></g>
+ <g transform="translate(470 178)"><ellipse cx="0" cy="34" rx="26" ry="6" fill="#000" opacity=".08"/><path d="M-22 30 Q-24 0 0 -8 Q24 0 22 30Z" fill="#fff" stroke="#2b2335" stroke-width="2"/><path d="M-16 -2 L-20 -18 L-6 -8Z M16 -2 L20 -18 L6 -8Z" fill="#fff" stroke="#2b2335" stroke-width="2"/><circle cx="-7" cy="6" r="2.2" fill="#2b2335"/><circle cx="7" cy="6" r="2.2" fill="#2b2335"/><path d="M-3 12 Q0 15 3 12" stroke="#2b2335" stroke-width="1.6" fill="none"/><circle cx="-12" cy="11" r="3" fill="#f7a1b0"/><circle cx="12" cy="11" r="3" fill="#f7a1b0"/><path d="M22 18 Q34 12 30 -2" stroke="#2b2335" stroke-width="2" fill="none"/><path d="M26 2 q8 -10 8 -18" stroke="#e8566b" stroke-width="3" fill="none" transform="rotate(10)"/></g>
+</svg>
+<h1>Lily's Japan Trip</h1>
+<p>Tokyo · Kyoto · Osaka · March 2027</p>
+</header>
+<nav id="tabs" aria-label="Sections">
+ <button data-tab="explore" class="on">🔎 Explore</button>
+ <button data-tab="mytrip">💖 My Trip</button>
+ <button data-tab="plan">🗓️ Plan</button>
+ <button data-tab="wanderlog">🧭 Wanderlog</button>
+ <button data-tab="knives">🔪 Knives</button>
+ <button data-tab="hotels">🏨 Hotels</button>
+ <button data-tab="vault">🔐 Vault</button>
+ <button data-tab="tips">🍙 Tips</button>
+</nav>
+<main>
+<!-- EXPLORE -->
+<section id="explore" class="on">
+ <div class="bar"><input type="search" id="q" placeholder="Search: ramen, knife, vintage, matcha, sake…" aria-label="Search the guide"></div>
+ <div class="chips" id="cityChips"></div>
+ <div class="chips" id="catChips"></div>
+ <div class="chips" id="priceChips"></div>
+ <div class="count" id="count"></div>
+ <div class="grid" id="results"></div>
+</section>
+
+<!-- MY TRIP -->
+<section id="mytrip">
+ <h2>My saved places</h2>
+ <p class="note">Tap 💖 on any card to save it here. Notes and day picks save automatically on this phone.</p>
+ <div id="savedList"></div>
+ <h3>Add your own place</h3>
+ <form id="addForm" class="box">
+  <div class="row"><input name="name" placeholder="Place name" required><select name="city"><option>Tokyo</option><option>Kyoto</option><option>Osaka</option><option>Anywhere</option></select><select name="cat"><option>Eat</option><option>Drink</option><option>Shop</option><option>Knife</option><option>Do</option><option>See</option><option>Day trip</option></select></div>
+  <div class="row" style="margin-top:8px"><input name="area" placeholder="Neighborhood (optional)"><input name="link" placeholder="Link (TikTok, Instagram, Maps)"></div>
+  <textarea name="desc" placeholder="Why it's on the list" style="margin-top:8px"></textarea>
+  <button class="btn" type="submit" style="margin-top:8px">Add to my trip</button>
+ </form>
+ <h3>Back up and share</h3>
+ <div class="box">
+  <div class="acts row">
+   <button class="btn ghost" data-act="exportFile">⬇️ Download backup</button>
+   <button class="btn ghost" data-act="exportCopy">📋 Copy backup</button>
+   <label class="btn ghost" style="text-align:center">⬆️ Restore backup<input type="file" id="importFile" accept=".json,application/json" hidden></label>
+   <button class="btn ghost" data-act="shareLink">🔗 Copy share link</button>
+  </div>
+  <p class="note">Your saves live in this browser. Download a backup now and then (save it to Google Drive or iCloud). A share link sends your saved list to a friend, who can add it to theirs.</p>
+ </div>
+ <h3>Group sync (optional)</h3>
+ <div class="box">
+  <p class="note">Lets all four friends share one trip through a free Google Sheet. Setup takes 5 minutes and is in the README. Anyone with the sheet link and trip code can see it, so keep passport numbers out.</p>
+  <div class="row"><input id="syncUrl" placeholder="Google Apps Script web app URL"><input id="syncCode" placeholder="Trip code (share with friends)"></div>
+  <div class="row" style="margin-top:8px"><input id="travName" placeholder="Your name (shows who added what)"><button class="btn ghost small" data-act="genCode">🎲 New code</button></div>
+  <div class="acts row" style="margin-top:8px"><button class="btn" data-act="push">⬆️ Send my changes</button><button class="btn ghost" data-act="pull">⬇️ Get group changes</button></div>
+  <p class="note" id="syncStatus"></p>
+ </div>
+</section>
+
+<!-- PLAN -->
+<section id="plan">
+ <h2>Day-by-day plan</h2>
+ <div class="box row"><label>First day in Japan <input type="date" id="startDate"></label><label>Number of days <input type="number" id="numDays" min="1" max="21" value="14"></label></div>
+ <p class="note">Pick a day for each saved place in 💖 My Trip, and it shows up here. Suggested split for a first trip: Tokyo 5 nights · Kyoto 3–4 · Osaka 4, with Nara as a day trip from Kyoto or Osaka.</p>
+ <div id="planDays"></div>
+</section>
+
+<!-- WANDERLOG -->
+<section id="wanderlog">
+ <h2>Wanderlog helper</h2>
+ <p class="note">Wanderlog is great for maps and routes on the ground. This page turns your saves into copy-paste lists and prompts so you don't retype anything.</p>
+ <div class="box">
+  <h3 style="margin-top:0">What to add in Wanderlog, in order</h3>
+  <ul class="clean" id="wlSteps"></ul>
+ </div>
+ <div class="box">
+  <h3 style="margin-top:0">1. Places to add, by day</h3>
+  <p class="note">Copy a day, then in Wanderlog open that day and search each name. Names include the neighborhood so the right pin comes up.</p>
+  <div id="wlDays"></div>
+ </div>
+ <div class="box">
+  <h3 style="margin-top:0">2. Copy-paste prompts</h3>
+  <p class="note">Paste into Wanderlog's AI assistant, Claude or ChatGPT. They fill in your saved places automatically.</p>
+  <div id="wlPrompts"></div>
+ </div>
+</section>
+
+<!-- KNIVES -->
+<section id="knives">
+ <h2>Buying a Japanese knife</h2>
+ <div class="box"><ul id="knifeTips"></ul></div>
+ <h3>Where to buy</h3>
+ <div class="grid" id="knifeShops"></div>
+</section>
+
+<!-- HOTELS -->
+<section id="hotels">
+ <h2>March hotel deals</h2>
+ <div class="box">
+  <b>The big money moves</b>
+  <ul>
+   <li><b>Go early March if you can.</b> Prices stay fairly quiet until about March 20, then climb into cherry-blossom season (forecast peak around Mar 28–Apr 5; no official 2027 forecast until about late Dec).</li>
+   <li><b>Osaka is the value base.</b> Its March 3-star average (~$104/night) is about 40% under Kyoto (~$175). Kyoto is 15–30 min away by train, so 2 nights in Kyoto plus day trips from Osaka saves real money.</li>
+   <li><b>Book an apartment-style room for 4.</b> One quad room with a kitchen beats two doubles on price and on fun.</li>
+   <li><b>Book refundable now, then re-check monthly.</b> Rebook if the price drops.</li>
+   <li><b>Kyoto lodging tax</b> is now per person per night: ¥400 for rooms ¥6,000–19,999 per person, ¥1,000 for ¥20,000–49,999. Small for four friends sharing a mid-range room.</li>
+  </ul>
+ </div>
+ <h3>Average nightly rate forecast (USD, trivago, checked Nov 21 2026)</h3>
+ <div class="box" style="overflow-x:auto">
+ <table><thead><tr><th>City</th><th>Feb 3★</th><th>Mar 3★</th><th>Apr 3★</th><th>Mar 4★</th></tr></thead>
+ <tbody>
+ <tr><td>Tokyo</td><td>$136</td><td>$171</td><td>$194</td><td>$310</td></tr>
+ <tr><td>Kyoto</td><td>$102</td><td>$175</td><td>$259</td><td>$256</td></tr>
+ <tr><td>Osaka</td><td>$84</td><td>$104</td><td>$110</td><td>$166</td></tr>
+ </tbody></table>
+ <p class="note">Monthly averages hide the late-March spike; the last 10 days of March run higher.</p>
+ </div>
+ <h3>Live sample quotes for 4 people in 1 room</h3>
+ <div class="box" style="overflow-x:auto">
+ <table><thead><tr><th>Hotel</th><th>Dates</th><th>Price</th><th>Per person / night</th><th>Notes</th></tr></thead>
+ <tbody>
+ <tr><td>MIMARU Osaka Namba Station (4★, 9.4/10)</td><td>Mar 12–16</td><td>$160/night (Expedia)</td><td>$40</td><td>Non-refundable at that price; walk to Namba food and Doguyasuji knives</td></tr>
+ <tr><td>MIMARU Tokyo Ueno North (4★, 9.3/10)</td><td>Mar 4–9</td><td>$251/night (Hotels.com)</td><td>$63</td><td>Free cancellation; kitchen; quieter area, 1 stop to Ueno</td></tr>
+ </tbody></table>
+ <p class="note">Prices change daily. Check on trivago, Google Hotels or the hotel's own site.</p>
+ </div>
+ <h3>Good fits for 4 friends</h3>
+ <div class="box"><ul>
+  <li><b>MIMARU</b> (Tokyo, Kyoto, Osaka): apartment rooms built for groups of 4, with kitchens and laundry. The default pick.</li>
+  <li><b>Design hostels with private quad rooms</b>: the cheapest way to get a great location. Filter for "private room, 4 guests".</li>
+  <li><b>A ryokan night</b> (Hakone or Kyoto): one splurge with tatami, yukata, dinner and onsen. Many charge per person.</li>
+  <li><b>Neighborhoods:</b> Tokyo: Shinjuku or Shibuya for nightlife, Ueno or Asakusa for value. Kyoto: near Shijo/Kawaramachi. Osaka: Namba or Shinsaibashi.</li>
+ </ul></div>
+</section>
+
+<!-- VAULT -->
+<section id="vault">
+ <h2>Trip vault</h2>
+ <div class="box warn"><b>Keep it safe:</b> store confirmation codes and links here, not passport or card numbers. This vault lives on this phone (and in the group sheet if you turn on sync).</div>
+ <form id="bookForm" class="box">
+  <div class="row"><select name="type"><option>✈️ Flight</option><option>🏨 Hotel</option><option>🚄 Train</option><option>🎟️ Ticket</option><option>🍣 Restaurant</option><option>📄 Other</option></select><input name="title" placeholder="What (e.g. MIMARU Osaka)" required></div>
+  <div class="row" style="margin-top:8px"><input type="date" name="date"><input type="time" name="time"><input name="conf" placeholder="Confirmation #"></div>
+  <div class="row" style="margin-top:8px"><input name="link" placeholder="Link to booking"><input name="addr" placeholder="Address (for taxi drivers)"></div>
+  <textarea name="notes" placeholder="Notes" style="margin-top:8px"></textarea>
+  <button class="btn" type="submit" style="margin-top:8px">Save booking</button>
+ </form>
+ <div id="bookList"></div>
+ <h3>Before-you-go checklist</h3>
+ <div class="box"><ul class="clean" id="checklist"></ul>
+ <div class="row" style="margin-top:8px"><input id="newCheck" placeholder="Add a to-do"><button class="btn ghost small" data-act="addCheck">Add</button></div></div>
+</section>
+
+<!-- TIPS -->
+<section id="tips">
+ <h2>Japan basics</h2>
+ <div class="box"><ul>
+  <li><b>Money:</b> cards work most places now, but small shops, shrines and food stalls want cash. Carry ¥10,000–20,000 and use 7-Eleven ATMs.</li>
+  <li><b>Transit:</b> add a Suica or PASMO card to Apple Wallet or Google Wallet and tap everywhere, even at konbini.</li>
+  <li><b>Shinkansen:</b> for a Tokyo → Kyoto → Osaka trip, single tickets usually beat the JR Pass since its 2023 price increase. Do the math with your real route.</li>
+  <li><b>Luggage forwarding (takkyubin):</b> send big bags hotel to hotel for about ¥2,500 each and ride the train light. Ask your front desk the day before.</li>
+  <li><b>Data:</b> buy an eSIM before you fly (Ubigi, Airalo, or your carrier's plan).</li>
+  <li><b>Power:</b> same plugs as the US (2-prong) and 100V. 3-prong plugs need a cheap adapter.</li>
+  <li><b>Arrival:</b> fill out Visit Japan Web for customs before landing to get the QR codes.</li>
+  <li><b>Manners:</b> no eating while walking in busy areas, quiet on trains, no tipping, carry a small trash bag (public bins are rare).</li>
+  <li><b>Konbini:</b> 7-Eleven egg sandwiches, Lawson fried chicken, FamilyMart melon pan. A cheap breakfast every day.</li>
+  <li><b>Departure tax:</b> it rose to ¥3,000 in July 2026. It's built into airfare.</li>
+ </ul></div>
+ <h3>Yen calculator</h3>
+ <div class="box row"><label>Yen <input id="yen" type="number" inputmode="decimal" placeholder="3000"></label><label>Yen per $1 <input id="rate" type="number" inputmode="decimal" placeholder="today's rate"></label><b id="usd" style="flex:0 0 auto"></b></div>
+ <p class="note">Look up today's rate once and type it in; it's remembered.</p>
+ <h3>Useful phrases</h3>
+ <div class="box" style="overflow-x:auto"><table>
+  <tr><td>Sumimasen</td><td>Excuse me / sorry / waiter!</td></tr>
+  <tr><td>Arigatou gozaimasu</td><td>Thank you very much</td></tr>
+  <tr><td>Yon-mei desu</td><td>Party of four</td></tr>
+  <tr><td>Osusume wa?</td><td>What do you recommend?</td></tr>
+  <tr><td>Kore kudasai</td><td>This one, please</td></tr>
+  <tr><td>Okaikei onegaishimasu</td><td>Check, please</td></tr>
+  <tr><td>Kaado de ii desu ka?</td><td>Can I pay by card?</td></tr>
+  <tr><td>Namae wo horite moraemasu ka?</td><td>Can you engrave my name?</td></tr>
+ </table></div>
+</section>
+</main>
+<footer>Made with love for Lily 🌸 · Always check hours on Google Maps before going.</footer>
+<div id="toast" role="status"></div>
+<script>
+// Lily's Japan Trip — guide data. Edit freely: each entry is one card.
+// price: ¥ = under ¥1,500 pp, ¥¥ = ¥1,500–5,000, ¥¥¥ = ¥5,000+
+// Hours, prices and closures change. Check Google Maps before going.
+window.GUIDE = [
+// ---------------- TOKYO: EAT ----------------
+{id:"t-fuunji",city:"Tokyo",cat:"Eat",name:"Fuunji",area:"Shinjuku",price:"¥",desc:"Cult tsukemen (dipping ramen) with a thick fish-and-pork broth. Line moves fast.",order:"Tokusei tsukemen; ask for soup-wari (broth top-up) at the end.",tags:"ramen tsukemen noodles local favorite"},
+{id:"t-tsujihan",city:"Tokyo",cat:"Eat",name:"Tsujihan",area:"Nihonbashi",price:"¥¥",desc:"A heaping seafood rice bowl that ends with hot sea-bream broth poured over the leftovers.",order:"Zeitakudon (the 'luxury' bowl), ume or take size.",tags:"seafood kaisendon sashimi lunch"},
+{id:"t-uogashi",city:"Tokyo",cat:"Eat",name:"Uogashi Nihon-Ichi (standing sushi)",area:"Shibuya",price:"¥",desc:"Stand-up sushi counter where you order piece by piece from the chef. Cheap and very local.",order:"Fatty tuna, salmon, seared engawa; point at what looks good.",tags:"sushi standing cheap counter"},
+{id:"t-omoide",city:"Tokyo",cat:"Eat",name:"Omoide Yokocho",area:"Shinjuku",price:"¥¥",desc:"Smoky lantern-lit alley of tiny yakitori stalls by Shinjuku Station. Go 5–7 pm before it packs.",order:"Negima, tsukune, a highball. Expect a small seat charge.",tags:"yakitori alley izakaya night photos"},
+{id:"t-gyozaro",city:"Tokyo",cat:"Eat",name:"Harajuku Gyoza-ro",area:"Harajuku",price:"¥",desc:"Two kinds of gyoza and nothing else, done perfectly. Easy cheap stop between shopping.",order:"Yaki (pan-fried) and sui (boiled), plus cucumber with miso.",tags:"gyoza dumplings cheap"},
+{id:"t-narikura",city:"Tokyo",cat:"Eat",name:"Tonkatsu Narikura",area:"Takadanobaba",price:"¥¥",desc:"Pale, juicy, low-temp tonkatsu that locals line up for. Arrive before opening.",order:"Rosu (loin) katsu set; try the salt.",tags:"tonkatsu pork local favorite line"},
+{id:"t-kikanbo",city:"Tokyo",cat:"Eat",name:"Kikanbo",area:"Kanda",price:"¥",desc:"Spicy miso ramen where you pick separate heat and numbing levels. Taiko drums on the speakers.",order:"Kara-shibi miso ramen; start at 'futsu' (normal) heat.",tags:"ramen spicy miso"},
+{id:"t-monja",city:"Tokyo",cat:"Eat",name:"Tsukishima Monja Street",area:"Tsukishima",price:"¥¥",desc:"A whole street of monjayaki spots where you cook a gooey savory pancake on your own griddle. Great for a group of four.",order:"Mentaiko mochi cheese monja.",tags:"monjayaki griddle group fun"},
+{id:"t-tsukiji",city:"Tokyo",cat:"Eat",name:"Tsukiji Outer Market breakfast",area:"Tsukiji",price:"¥¥",desc:"Graze stalls for breakfast. Most shops close by early afternoon.",order:"Tamagoyaki on a stick, uni or tuna bowl, strawberry daifuku.",tags:"market breakfast seafood street food"},
+{id:"t-depachika",city:"Tokyo",cat:"Eat",name:"Isetan Shinjuku depachika",area:"Shinjuku",price:"¥¥",desc:"Department-store food basement: jewel-box sweets, bento and gifts. Discounts on bento near closing.",order:"Fruit sando, seasonal wagashi, a bento for the train.",tags:"food hall sweets bento gifts department store"},
+{id:"t-ebisuyoko",city:"Tokyo",cat:"Eat",name:"Ebisu Yokocho",area:"Ebisu",price:"¥¥",desc:"Indoor alley of small izakaya stalls. Loud, friendly, easy to share plates with strangers.",order:"Whatever the stall next to you is grilling, plus a lemon sour.",tags:"izakaya alley night group"},
+// ---------------- TOKYO: DRINK / NIGHT ----------------
+{id:"t-goldengai",city:"Tokyo",cat:"Drink",name:"Golden Gai",area:"Shinjuku",price:"¥¥",desc:"About 200 tiny bars, most seating 6–10. Look for 'Welcome' or English signs; cover charges are common.",order:"One drink per bar, then hop.",tags:"bars nightlife tiny bars"},
+{id:"t-benfiddich",city:"Tokyo",cat:"Drink",name:"Bar Benfiddich",area:"Nishi-Shinjuku",price:"¥¥¥",desc:"Splurge cocktail bar using herbs the bartender grows and forages. Small, so go early or reserve.",order:"Tell them flavors you like; skip the menu.",tags:"cocktails splurge craft"},
+{id:"t-sgclub",city:"Tokyo",cat:"Drink",name:"The SG Club",area:"Shibuya",price:"¥¥¥",desc:"World-ranked cocktail bar with a relaxed upstairs and a cozier downstairs bar.",order:"House highballs or a signature cocktail.",tags:"cocktails world best bar"},
+{id:"t-nonbei",city:"Tokyo",cat:"Drink",name:"Nonbei Yokocho",area:"Shibuya",price:"¥¥",desc:"'Drunkard's Alley': a lantern-lined lane of tiny bars right by Shibuya Station.",order:"Sake or umeshu.",tags:"bars alley nightlife"},
+{id:"t-karaoke",city:"Tokyo",cat:"Do",name:"Private-room karaoke",area:"Shibuya / Shinjuku",price:"¥¥",desc:"A must for a group of four. Book a room by the hour; many have all-you-can-drink plans.",order:"Nomihodai (drink plan) for 2 hours.",tags:"karaoke night group fun"},
+// ---------------- TOKYO: SHOPS ----------------
+{id:"t-kappabashi",city:"Tokyo",cat:"Knife",name:"Kappabashi Kitchen Town",area:"Asakusa",price:"¥¥¥",desc:"A whole street of chef-supply stores: knives, ceramics, and the plastic fake food you see in windows. Best one-stop knife street in Tokyo.",order:"Compare a few knife shops here before buying. Many close Sundays.",tags:"knife kitchen cookware fake food shopping"},
+{id:"t-kamaasa",city:"Tokyo",cat:"Knife",name:"Kama-Asa",area:"Kappabashi",price:"¥¥¥",desc:"Old Kappabashi shop (since 1908) with a clean, curated knife wall and staff who explain steel types. Free name engraving on many knives.",order:"Ask to hold a 210 mm gyuto and a santoku side by side.",tags:"knife engraving gift"},
+{id:"t-kamata",city:"Tokyo",cat:"Knife",name:"Kamata Hakensha",area:"Kappabashi",price:"¥¥¥",desc:"Family knife shop with a huge range, many price points, and in-house sharpening.",order:"Their own-brand stainless gyuto is good value.",tags:"knife sharpening"},
+{id:"t-kiya",city:"Tokyo",cat:"Knife",name:"Nihonbashi Kiya",area:"Nihonbashi (COREDO Muromachi)",price:"¥¥¥",desc:"Blade shop dating to 1792: kitchen knives, scissors, and beautiful nail clippers that make good small gifts.",order:"Pair a knife with a gift-boxed pair of scissors.",tags:"knife history gift scissors"},
+{id:"t-itoya",city:"Tokyo",cat:"Shop",name:"Ginza Itoya",area:"Ginza",price:"¥¥",desc:"12 floors of stationery: washi paper, pens, letter sets. Make your own custom notebook.",order:"Custom notebook bar; Japanese pens.",tags:"stationery paper gifts"},
+{id:"t-loft",city:"Tokyo",cat:"Shop",name:"Shibuya Loft and Tokyu Hands",area:"Shibuya",price:"¥¥",desc:"Floors of clever Japanese gadgets, beauty products, stationery and home goods. Easy souvenir haul.",order:"Face masks, sunscreen, gadgets you didn't know existed.",tags:"beauty gadgets souvenirs skincare"},
+{id:"t-donki",city:"Tokyo",cat:"Shop",name:"Don Quijote (MEGA Shibuya)",area:"Shibuya",price:"¥",desc:"Chaotic, open-late discount store: snacks, beauty, costumes, Kit Kat flavors. Fun at 11 pm.",order:"Regional Kit Kats, cosmetics, snacks for home.",tags:"souvenirs snacks late night cheap"},
+{id:"t-beamsjapan",city:"Tokyo",cat:"Shop",name:"BEAMS Japan",area:"Shinjuku",price:"¥¥",desc:"Floors of things made in Japan: crafts, folk art, fashion and food. Souvenirs that don't feel touristy.",order:"Ceramics and small crafts floor.",tags:"crafts made in japan fashion gifts"},
+{id:"t-nakano",city:"Tokyo",cat:"Shop",name:"Nakano Broadway",area:"Nakano",price:"¥¥",desc:"Old shopping mall packed with anime, vintage toys, watches and collectibles. Less touristy than Akihabara.",order:"Mandarake shops for vintage manga and figures.",tags:"anime vintage collectibles toys"},
+{id:"t-gacha",city:"Tokyo",cat:"Shop",name:"Gashapon Department Store",area:"Ikebukuro (Sunshine City)",price:"¥",desc:"Thousands of capsule-toy machines in one place. Bring ¥100 coins (there are change machines).",order:"Set a ¥2,000 limit each and trade with friends.",tags:"capsule toys gacha cheap fun"},
+{id:"t-shimokita",city:"Tokyo",cat:"Shop",name:"Shimokitazawa",area:"Setagaya",price:"¥¥",desc:"Vintage and thrift stores, record shops, small coffee bars. Tokyo's indie neighborhood.",order:"Wander the side streets; reload station area has newer shops.",tags:"vintage thrift coffee neighborhood"},
+{id:"t-koenji",city:"Tokyo",cat:"Shop",name:"Koenji",area:"Suginami",price:"¥",desc:"Punk and vintage shopping arcades by day, tiny bars and live music by night.",order:"Look Street for vintage; izakaya under the tracks after.",tags:"vintage nightlife neighborhood"},
+{id:"t-kiddyland",city:"Tokyo",cat:"Shop",name:"Kiddy Land Harajuku",area:"Harajuku",price:"¥¥",desc:"Multi-floor character store: Sanrio, Ghibli, Snoopy, Rilakkuma.",order:"Then walk Cat Street toward Shibuya for boutiques.",tags:"sanrio character cute"},
+{id:"t-purikura",city:"Tokyo",cat:"Do",name:"Purikura photo booths",area:"Harajuku / Shibuya",price:"¥",desc:"Japanese photo-sticker booths with wild beauty filters. Perfect four-friend souvenir.",order:"Takeshita Street arcades have floors of them.",tags:"photo booth fun group cute"},
+{id:"t-yanaka",city:"Tokyo",cat:"See",name:"Yanaka Ginza",area:"Yanaka",price:"¥",desc:"Old-Tokyo shopping street that survived the war: snacks, crafts, street cats. A slower, prettier side of the city.",order:"Menchi-katsu croquette from a street stall.",tags:"old tokyo shopping street snacks"},
+{id:"t-gotokuji",city:"Tokyo",cat:"See",name:"Gotokuji Temple",area:"Setagaya",price:"¥",desc:"Temple covered in thousands of white beckoning-cat (maneki-neko) figures. Pair with Shimokitazawa.",order:"Buy a small cat figure to leave or take home.",tags:"temple cats unique photos"},
+{id:"t-kabuki",city:"Tokyo",cat:"Do",name:"Kabuki-za single-act seats",area:"Ginza",price:"¥¥",desc:"Buy a same-day ticket for one act instead of a full show. Rent the English audio guide.",order:"Makumi-seki (single act) tickets, sold day-of.",tags:"theater culture kabuki"},
+{id:"t-sento",city:"Tokyo",cat:"Do",name:"Neighborhood sento bath",area:"Various",price:"¥",desc:"Old public bathhouse for about ¥550. Bring a small towel. Some ban tattoos, so check first.",order:"Then a bottle of coffee milk, the classic after-bath drink.",tags:"bath sento culture relaxing"},
+{id:"t-teamlab",city:"Tokyo",cat:"See",name:"teamLab Planets",area:"Toyosu",price:"¥¥",desc:"Popular, but worth it: walk barefoot through water and light rooms. Book a timed slot ahead.",order:"Wear shorts or pants that roll up.",tags:"art immersive popular book ahead"},
+{id:"t-shibuyasky",city:"Tokyo",cat:"See",name:"Shibuya Sky at sunset",area:"Shibuya",price:"¥¥",desc:"Open-air rooftop over the Scramble. Sunset slots sell out, so book about 4 weeks ahead.",order:"Book the slot 30 min before sunset.",tags:"view rooftop popular book ahead"},
+{id:"t-nakameguro",city:"Tokyo",cat:"See",name:"Nakameguro canal",area:"Meguro",price:"¥¥",desc:"Canal lined with cafes and boutiques; the most famous sakura tunnel in Tokyo if blooms line up (late March).",order:"Coffee to go and a slow walk.",tags:"cafes sakura walk boutiques"},
+{id:"t-kamakura",city:"Tokyo",cat:"Day trip",name:"Kamakura and Enoshima",area:"1 hr from Tokyo",price:"¥¥",desc:"Giant Buddha, temple streets, and a beach-town vibe. Ride the little Enoden train along the coast.",order:"Shirasu (whitebait) rice bowl in Enoshima.",tags:"day trip beach temples train"},
+{id:"t-hakone",city:"Tokyo",cat:"Day trip",name:"Hakone overnight",area:"1.5 hr from Tokyo",price:"¥¥¥",desc:"Hot springs, ropeway, a pirate-ship lake cruise and Mt Fuji views on clear days. Best as one night in a ryokan.",order:"Hakone Free Pass covers most transport.",tags:"onsen ryokan fuji day trip"},
+// ---------------- KYOTO ----------------
+{id:"k-inari",city:"Kyoto",cat:"See",name:"Fushimi Inari Taisha",area:"Fushimi",price:"¥",desc:"Thousands of orange torii gates. Go by 7:30 am or after 5 pm; crowds thin past the first 20 minutes uphill.",order:"Kitsune udon or inari sushi at the shops at the base.",tags:"shrine torii gates photos early"},
+{id:"k-nishiki",city:"Kyoto",cat:"Eat",name:"Nishiki Market",area:"Downtown",price:"¥¥",desc:"Narrow covered food market. Eat at the stall, since walking while eating is discouraged here.",order:"Tamagoyaki, soy-milk donuts, pickles, sesame everything.",tags:"market street food snacks"},
+{id:"k-aritsugu",city:"Kyoto",cat:"Knife",name:"Aritsugu",area:"Nishiki Market",price:"¥¥¥",desc:"Knife maker founded in 1560, right in Nishiki Market. They engrave your name in Japanese for free while you wait.",order:"Stainless or carbon gyuto; ask for name engraving.",tags:"knife engraving historic gift"},
+{id:"k-omen",city:"Kyoto",cat:"Eat",name:"Omen (Ginkakuji)",area:"Higashiyama",price:"¥¥",desc:"Thick udon you dip in hot broth with seasonal vegetables and sesame. Near the Philosopher's Path.",order:"The namesake Omen set.",tags:"udon noodles lunch"},
+{id:"k-daiichi",city:"Kyoto",cat:"Eat",name:"Honke Daiichi-asahi",area:"Kyoto Station",price:"¥",desc:"Classic Kyoto soy-pork ramen, open early. Good arrival or departure meal.",order:"Tokusei ramen with extra green onion.",tags:"ramen early station"},
+{id:"k-gogyo",city:"Kyoto",cat:"Eat",name:"Kyoto Gogyo",area:"Downtown",price:"¥¥",desc:"Burnt (kogashi) miso ramen in an old townhouse. Rich, smoky, unusual.",order:"Kogashi miso ramen.",tags:"ramen unique dinner"},
+{id:"k-pontocho",city:"Kyoto",cat:"Eat",name:"Pontocho alley",area:"Downtown",price:"¥¥¥",desc:"Lantern-lit lane by the river. Prices vary a lot; yakitori and kushiage spots are friendlier on the wallet.",order:"Look for posted menus with prices outside.",tags:"dinner alley night atmosphere"},
+{id:"k-beesknees",city:"Kyoto",cat:"Drink",name:"Bee's Knees",area:"Kiyamachi",price:"¥¥¥",desc:"Speakeasy hidden behind a plain blue door. Creative cocktails, small room.",order:"Seasonal cocktail list.",tags:"cocktails speakeasy"},
+{id:"k-lescamoteur",city:"Kyoto",cat:"Drink",name:"L'Escamoteur",area:"Kiyamachi",price:"¥¥",desc:"Magic-and-curiosities themed cocktail bar with theatrical drinks.",order:"Ask what's on fire tonight.",tags:"cocktails themed fun"},
+{id:"k-fushimisake",city:"Kyoto",cat:"Drink",name:"Fushimi sake district",area:"Fushimi",price:"¥¥",desc:"Old sake breweries by willow-lined canals. Tasting flights, and it pairs well with Fushimi Inari.",order:"Gekkeikan museum tasting; sake flight at a local brewpub.",tags:"sake tasting brewery"},
+{id:"k-ippodo",city:"Kyoto",cat:"Shop",name:"Ippodo Tea",area:"Teramachi",price:"¥¥",desc:"Tea merchant since 1717. Try tea in the tearoom, then buy matcha or sencha to take home.",order:"Tearoom matcha with a sweet.",tags:"tea matcha gift shop"},
+{id:"k-kyukyodo",city:"Kyoto",cat:"Shop",name:"Kyukyodo",area:"Teramachi",price:"¥¥",desc:"Incense, washi paper, cards and calligraphy goods since the 1600s. Beautiful small gifts.",order:"Incense sampler and seasonal postcards.",tags:"incense paper stationery gifts"},
+{id:"k-ichizawa",city:"Kyoto",cat:"Shop",name:"Ichizawa Shinzaburo Hanpu",area:"Higashiyama",price:"¥¥¥",desc:"Handmade canvas bags sold only at their own Kyoto shop. Sturdy, simple, last for years.",order:"A tote in a color you can't get at home.",tags:"bags handmade crafts"},
+{id:"k-kaikado",city:"Kyoto",cat:"Shop",name:"Kaikado tea caddies and cafe",area:"Near Kamogawa",price:"¥¥¥",desc:"Hand-made metal tea canisters (since 1875) that develop a patina. Their cafe is a calm break.",order:"Small copper caddy as a lifetime souvenir.",tags:"crafts tea gift cafe"},
+{id:"k-teramachi",city:"Kyoto",cat:"Shop",name:"Teramachi and Shinkyogoku arcades",area:"Downtown",price:"¥¥",desc:"Covered shopping streets mixing old craft shops, clothing, and quirky souvenir spots. Good rainy-day option.",order:"Wander between Nishiki and Sanjo.",tags:"shopping arcade rainy day"},
+{id:"k-toji",city:"Kyoto",cat:"Shop",name:"To-ji flea market (21st of each month)",area:"South Kyoto",price:"¥",desc:"Huge monthly temple market: old kimono, ceramics, antiques, food stalls. Only on the 21st.",order:"Vintage kimono or haori for a few thousand yen.",tags:"flea market vintage kimono antiques"},
+{id:"k-kitano",city:"Kyoto",cat:"See",name:"Kitano Tenmangu plum garden",area:"North Kyoto",price:"¥",desc:"Plum blossoms peak about late Feb to mid-March, before the cherries. Flea market here on the 25th.",order:"Plum tea and sweets in the garden.",tags:"plum blossoms shrine early march market"},
+{id:"k-kimono",city:"Kyoto",cat:"Do",name:"Kimono rental",area:"Gion / Higashiyama",price:"¥¥",desc:"Rent kimono for the day as a group and walk Gion and Ninenzaka. Book online; hair styling is extra.",order:"Book a morning slot so you get the full day.",tags:"kimono photos group culture"},
+{id:"k-tea",city:"Kyoto",cat:"Do",name:"Tea ceremony class",area:"Gion",price:"¥¥",desc:"Small-group tea ceremony where you whisk your own matcha. About 45–60 minutes.",order:"Book a group of 4 together.",tags:"tea ceremony culture class"},
+{id:"k-gion",city:"Kyoto",cat:"See",name:"Gion at dusk",area:"Gion",price:"¥",desc:"Walk Hanamikoji and Shirakawa as the lanterns come on. Don't photograph geiko up close; private lanes are off limits.",order:"Then dinner in Pontocho.",tags:"geisha district evening walk"},
+{id:"k-otagi",city:"Kyoto",cat:"See",name:"Otagi Nenbutsu-ji",area:"Far Arashiyama",price:"¥",desc:"1,200 mossy stone statues, each with a different funny face. Hardly anyone goes. Take a taxi from Arashiyama.",order:"Find one that looks like each of you.",tags:"temple quirky hidden gem"},
+{id:"k-monkeys",city:"Kyoto",cat:"See",name:"Arashiyama Monkey Park",area:"Arashiyama",price:"¥",desc:"20-minute uphill walk to wild snow monkeys and a city view; you feed them from inside a hut.",order:"Combine with the bamboo grove at 8 am.",tags:"monkeys wildlife view"},
+{id:"k-philosopher",city:"Kyoto",cat:"See",name:"Philosopher's Path",area:"Higashiyama",price:"¥",desc:"Flat canal-side walk past small shops and cafes. A sakura tunnel if blooms line up.",order:"Start at Ginkakuji, end near Nanzen-ji.",tags:"walk sakura canal cafes"},
+{id:"k-nara",city:"Kyoto",cat:"Day trip",name:"Nara deer park",area:"45 min from Kyoto or Osaka",price:"¥",desc:"Bowing deer roam the park around the giant Buddha at Todai-ji. Flat, easy, and very fun.",order:"Shika senbei (deer crackers); hide them until you're ready.",tags:"deer day trip easy temple"},
+{id:"k-uji",city:"Kyoto",cat:"Day trip",name:"Uji matcha town",area:"25 min from Kyoto",price:"¥¥",desc:"Japan's matcha capital: the Byodo-in temple (on the ¥10 coin) and matcha everything.",order:"Matcha parfait at Nakamura Tokichi.",tags:"matcha tea day trip sweets"},
+// ---------------- OSAKA ----------------
+{id:"o-sumo",city:"Osaka",cat:"Do",name:"March Grand Sumo Tournament",area:"Edion Arena Osaka",price:"¥¥¥",desc:"Osaka hosts the 2027 March tournament Mar 14–28 at EDION Arena, a short walk from Namba. Tickets go on sale Feb 6, 2027 on the official Ticket Oosumo site; weekends sell out first.",order:"Chair seats upstairs are cheapest; arrive mid-afternoon for the top divisions.",tags:"sumo unique event march tickets"},
+{id:"o-doguya",city:"Osaka",cat:"Knife",name:"Sennichimae Doguyasuji",area:"Namba",price:"¥¥¥",desc:"Osaka's covered kitchen-tools arcade: knives, takoyaki pans, ceramics, fake food. Steps from Dotonbori.",order:"Buy a takoyaki pan as a fun gift too.",tags:"knife kitchen arcade cookware"},
+{id:"o-tower",city:"Osaka",cat:"Knife",name:"Tower Knives Osaka",area:"Doguyasuji",price:"¥¥¥",desc:"English-friendly knife shop with knives from Sakai and beyond, sharpening demos, and patient staff. Good for a first Japanese knife.",order:"Ask about Sakai-made stainless gyuto.",tags:"knife english friendly sakai"},
+{id:"o-sakai",city:"Osaka",cat:"Knife",name:"Sakai knife town",area:"20 min south of Osaka",price:"¥¥¥",desc:"Japan's historic knife capital, where most pro chef knives are made. The free Sakai Traditional Crafts Museum (Denshokan) has a big knife shop, a knife museum, and sharpening classes. Closed the 3rd Tuesday of each month.",order:"Half-day trip if she wants to buy straight from the source.",tags:"knife day trip crafts sakai"},
+{id:"o-harukoma",city:"Osaka",cat:"Eat",name:"Harukoma",area:"Tenma",price:"¥¥",desc:"Local-favorite sushi with big cuts at low prices on Japan's longest shopping street. Expect a line.",order:"Toro, anago, and whatever is on the daily board.",tags:"sushi local favorite cheap"},
+{id:"o-mizuno",city:"Osaka",cat:"Eat",name:"Mizuno",area:"Dotonbori",price:"¥¥",desc:"Okonomiyaki since 1945, cooked in front of you. Worth the queue over the flashy neighbors.",order:"Yamaimo-yaki (yam batter, very fluffy).",tags:"okonomiyaki dotonbori"},
+{id:"o-kiji",city:"Osaka",cat:"Eat",name:"Kiji",area:"Umeda Sky Building basement",price:"¥¥",desc:"Tiny okonomiyaki counter in a retro Showa-style food alley. Do it before the sunset view upstairs.",order:"Modan-yaki (with noodles).",tags:"okonomiyaki retro"},
+{id:"o-takoyaki",city:"Osaka",cat:"Eat",name:"Takoyaki crawl",area:"Namba / Amerikamura",price:"¥",desc:"Try three stands and vote. Wanaka and Kogaryu are reliable favorites.",order:"Classic sauce and mayo, then a dashi-dipped version.",tags:"takoyaki street food cheap"},
+{id:"o-jinrui",city:"Osaka",cat:"Eat",name:"Jinrui Mina Menrui",area:"Nishinakajima",price:"¥",desc:"Famous shoyu ramen with thick slabs of chashu. One of Osaka's top-rated bowls.",order:"Genten ramen.",tags:"ramen famous"},
+{id:"o-kushikatsu",city:"Osaka",cat:"Eat",name:"Shinsekai kushikatsu",area:"Shinsekai",price:"¥",desc:"Retro neon district famous for deep-fried skewers. One rule: no double-dipping in the shared sauce.",order:"Beef, lotus root, quail egg, cheese.",tags:"kushikatsu retro cheap"},
+{id:"o-yakiniku",city:"Osaka",cat:"Eat",name:"Matsusakagyu Yakiniku M",area:"Hozenji",price:"¥¥¥",desc:"Splurge-night grilled wagyu you cook at the table. Lunch sets cost less.",order:"Assorted Matsusaka beef set.",tags:"wagyu yakiniku splurge"},
+{id:"o-tenjinbashi",city:"Osaka",cat:"Shop",name:"Tenjinbashisuji Shotengai",area:"Tenma",price:"¥",desc:"Japan's longest covered shopping street (2.6 km): snacks, old shops, cheap eats, no tourist polish.",order:"Croquettes and cheap sushi along the way.",tags:"shopping street local cheap"},
+{id:"o-amemura",city:"Osaka",cat:"Shop",name:"Amerikamura",area:"Shinsaibashi",price:"¥¥",desc:"Osaka's youth fashion and thrift neighborhood, plus street art and takoyaki.",order:"Vintage stores on the side streets.",tags:"vintage fashion thrift"},
+{id:"o-nakazaki",city:"Osaka",cat:"Shop",name:"Nakazakicho",area:"Umeda",price:"¥¥",desc:"Old wooden houses turned into tiny cafes, vintage shops and galleries. Calm, artsy, very Instagrammable.",order:"Cafe-hop and look for handmade goods.",tags:"cafes vintage crafts hidden"},
+{id:"o-denden",city:"Osaka",cat:"Shop",name:"Den Den Town",area:"Nipponbashi",price:"¥¥",desc:"Osaka's anime, game and retro-toy district. More relaxed than Akihabara.",order:"Retro game shops and figure stores.",tags:"anime games retro"},
+{id:"o-hankyu",city:"Osaka",cat:"Shop",name:"Hankyu Umeda depachika",area:"Umeda",price:"¥¥",desc:"One of Japan's best food basements for sweets and beautifully boxed gifts.",order:"Seasonal sweets as gifts for home.",tags:"food hall sweets gifts"},
+{id:"o-uranamba",city:"Osaka",cat:"Drink",name:"Ura-Namba",area:"Namba",price:"¥¥",desc:"Backstreets behind Namba packed with small izakaya and standing bars. Where locals go instead of Dotonbori.",order:"Bar-hop: one drink and one dish per place.",tags:"izakaya nightlife local"},
+{id:"o-uratenma",city:"Osaka",cat:"Drink",name:"Ura-Tenma",area:"Tenma",price:"¥¥",desc:"Dense web of cheap izakaya under and around the train tracks. Loud, friendly, great value.",order:"Highballs and skewers.",tags:"izakaya cheap nightlife"},
+{id:"o-hozenji",city:"Osaka",cat:"See",name:"Hozenji Yokocho",area:"Namba",price:"¥",desc:"Quiet stone-paved lane with a moss-covered statue people splash with water for luck. Lovely at night.",order:"Splash the statue, then dinner nearby.",tags:"alley shrine night quiet"},
+{id:"o-umedasky",city:"Osaka",cat:"See",name:"Umeda Sky Building",area:"Umeda",price:"¥¥",desc:"Open-air 'floating garden' observatory. Go at sunset.",order:"Kiji okonomiyaki in the basement first.",tags:"view sunset"},
+{id:"o-castle",city:"Osaka",cat:"See",name:"Osaka Castle park",area:"Chuo",price:"¥",desc:"Plum grove in early March, cherry blossoms late March. The park beats the museum inside.",order:"Picnic from a konbini.",tags:"castle park plum sakura"},
+{id:"o-usj",city:"Osaka",cat:"Do",name:"Universal Studios Japan (Super Nintendo World)",area:"Bay area",price:"¥¥¥",desc:"Big ticket, but a blast with friends. Nintendo World needs a timed-entry ticket or Express Pass.",order:"Buy Express Pass ahead for weekend visits.",tags:"theme park nintendo popular"},
+{id:"o-kobe",city:"Osaka",cat:"Day trip",name:"Kobe",area:"30 min from Osaka",price:"¥¥¥",desc:"Kobe beef lunch sets cost far less than dinner. Add the harbor and Nada sake breweries.",order:"Kobe beef teppanyaki lunch set.",tags:"kobe beef day trip sake"},
+{id:"o-himeji",city:"Osaka",cat:"Day trip",name:"Himeji Castle",area:"1 hr from Osaka",price:"¥¥",desc:"Japan's most beautiful original castle. Half day, easy by shinkansen.",order:"Add Kokoen garden next door.",tags:"castle day trip"}
+];
+
+window.KNIFE_TIPS = [
+"Best first knife: a 210 mm gyuto (chef's knife) or a 165–180 mm santoku. Budget about ¥15,000–40,000 for a great one.",
+"Stainless or stainless-clad steel is easier to care for. Pure carbon steel gets sharper but rusts if left wet.",
+"Hold it before buying. Good shops let you feel the weight and handle. Ask: 'Kore wo motte mite mo ii desu ka?' (May I hold this?)",
+"Many shops engrave your name for free (Aritsugu, Kama-Asa). Allow 15–30 minutes.",
+"Pack knives in CHECKED luggage only, never carry-on. Keep the shop's box and blade guard.",
+"Buy a whetstone (#1000/#6000 combo) and ask the shop to show you the angle. Never use a dishwasher.",
+"Big purchases may qualify for tax refunds; bring your passport. Japan has been changing how tourist tax refunds work, so ask the shop how it works now."
+];
+
+</script>
+<script>
+(function(){
+"use strict";
+const G = window.GUIDE || [];
+const KEY = "lilyTrip.v1";
+const CATS = ["Eat","Drink","Shop","Knife","Do","See","Day trip"];
+const CAT_ICON = {Eat:"🍜",Drink:"🍸",Shop:"🛍️",Knife:"🔪",Do:"🎎",See:"⛩️","Day trip":"🚄"};
+const DEFAULT_CHECK = ["Passport valid through the trip","Book flights","Book hotels (refundable first)","Travel insurance","Tell bank and card company about travel","eSIM bought","Suica in phone wallet","Visit Japan Web filled out","Shibuya Sky slot (about 4 weeks ahead)","teamLab tickets","Sumo tickets (on sale Feb 6, 2027)","Kimono rental or tea ceremony booked","Download offline Google Map of each city","Pack a small towel and trash bag"];
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Math.random().toString(36).slice(2, 10);
+const now = () => Date.now();
+
+function blank(){ return {saved:{}, custom:[], bookings:[], checklist:DEFAULT_CHECK.map((t,i)=>({id:"ck"+i,t,done:false,u:0})), base:{}, start:"", days:14, settings:{syncUrl:"",code:"",name:""}}; }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && typeof s === "object") return Object.assign(blank(), s); }catch(e){} return blank(); }
+let S = load();
+setTimeout(()=>{ try{ dedupeChecklist(); }catch(_){} },0);
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast("This browser isn't saving. Download a backup."); } }
+function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove("show"),2200); }
+
+const live = arr => (arr||[]).filter(x=>!x.del);
+function dedupeChecklist(){ const seen=new Set(); S.checklist=(S.checklist||[]).filter(c=>{ const k=c.del?"#"+c.id:c.t.trim().toLowerCase(); if(seen.has(k)) return false; seen.add(k); return true; }); }
+const allItems = () => G.concat(live(S.custom));
+const byId = id => allItems().find(x=>x.id===id);
+const isSaved = id => S.saved[id] && !S.saved[id].del;
+const mapUrl = it => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([it.name, it.area, it.city==="Anywhere"?"Japan":it.city+" Japan"].filter(Boolean).join(" "));
+
+// petals
+(function(){ const h=$("#hero"); for(let i=0;i<14;i++){ const p=document.createElement("span"); p.className="petal"; p.style.left=(Math.random()*100)+"%"; p.style.animationDuration=(6+Math.random()*6)+"s"; p.style.animationDelay=(-Math.random()*10)+"s"; h.appendChild(p);} })();
+
+// tabs
+function showTab(name){ document.querySelectorAll("nav button").forEach(b=>{ b.classList.toggle("on", b.dataset.tab===name); b.setAttribute("aria-current", b.dataset.tab===name?"page":"false"); }); document.querySelectorAll("main section").forEach(s=>s.classList.toggle("on", s.id===name)); render(name); }
+$("#tabs").addEventListener("click", e=>{ const b=e.target.closest("button[data-tab]"); if(b){ showTab(b.dataset.tab); try{ history.replaceState(null,"","#"+b.dataset.tab);}catch(_){} } });
+
+// explore
+const F = {q:"", city:"All", cat:"All", price:"All", saved:"0"};
+function chips(el, key, opts){ el.innerHTML = opts.map(o=>`<button aria-pressed="${F[key]===o}" class="chip${F[key]===o?" on":""}" data-k="${key}" data-v="${esc(o)}">${o==="All"?"All "+({city:"cities",cat:"types",price:"prices"}[key]):(CAT_ICON[o]?CAT_ICON[o]+" ":"")+esc(o)}</button>`).join(""); }
+document.addEventListener("click", e=>{ const c=e.target.closest(".chip[data-k]"); if(c){ F[c.dataset.k]=c.dataset.v; renderExplore(); } const x=e.target.closest("[data-act=clearF]"); if(x){ Object.assign(F,{q:"",city:"All",cat:"All",price:"All",saved:"0"}); $("#q").value=""; renderExplore(); } });
+$("#q").addEventListener("input", e=>{ F.q=e.target.value; renderExplore(); });
+
+function cardHTML(it, opts){
+  opts = opts || {};
+  const saved = isSaved(it.id);
+  return `<div class="card">
+   <div class="top"><div><span class="tag ${esc(it.city)}">${esc(it.city)}</span><span class="meta">${CAT_ICON[it.cat]||""} ${esc(it.cat)}${it.area?" · "+esc(it.area):""}${it.price?" · "+esc(it.price):""}</span><h4>${esc(it.name)}</h4></div></div>
+   ${it.desc?`<div>${esc(it.desc)}</div>`:""}
+   ${it.order?`<div class="order"><b>Get:</b> ${esc(it.order)}</div>`:""}
+   ${opts.extra||""}
+   <div class="acts">
+    <button class="btn small ${saved?"saved":""}" data-act="toggle" data-id="${esc(it.id)}">${saved?"💖 Saved":"🤍 Save"}</button>
+    <a class="btn small ghost" href="${mapUrl(it)}" target="_blank" rel="noopener">📍 Map</a>
+    ${it.link?`<a class="btn small ghost" href="${esc(it.link)}" target="_blank" rel="noopener">🔗 Link</a>`:""}
+   </div></div>`;
+}
+function renderExplore(){
+  chips($("#cityChips"),"city",["All","Tokyo","Kyoto","Osaka"]);
+  chips($("#catChips"),"cat",["All"].concat(CATS));
+  chips($("#priceChips"),"price",["All","¥","¥¥","¥¥¥"]);
+  $("#priceChips").insertAdjacentHTML("beforeend", `<button aria-pressed="${F.saved==="1"}" class="chip${F.saved==="1"?" on":""}" data-k="saved" data-v="${F.saved==="1"?"0":"1"}">💖 Saved only</button><button class="chip" data-act="clearF">✕ Clear</button>`);
+  const terms = F.q.toLowerCase().split(/\s+/).filter(Boolean);
+  const list = allItems().filter(it=>{
+    if(F.city!=="All" && it.city!==F.city) return false;
+    if(F.cat!=="All" && it.cat!==F.cat) return false;
+    if(F.price!=="All" && it.price!==F.price) return false;
+    if(F.saved==="1" && !isSaved(it.id)) return false;
+    if(!terms.length) return true;
+    const hay = [it.name,it.area,it.city,it.cat,it.desc,it.order,it.tags].join(" ").toLowerCase();
+    return terms.every(t=>hay.includes(t));
+  });
+  $("#count").textContent = list.length + " of " + allItems().length + " places";
+  $("#results").innerHTML = list.length ? list.map(it=>cardHTML(it)).join("") : `<div class="empty">Nothing matches. Try fewer words or <button class="btn small ghost" data-act="clearF">clear filters</button></div>`;
+}
+
+// my trip
+function dayOptions(sel){
+  let h = `<option value="">No day yet</option>`;
+  for(let d=1; d<=S.days; d++) h += `<option value="${d}"${String(sel)===String(d)?" selected":""}>${dayLabel(d)}</option>`;
+  return h;
+}
+function dayLabel(d){
+  d = parseInt(d,10);
+  if(!S.start) return "Day "+d;
+  const dt = new Date(S.start+"T12:00:00"); dt.setDate(dt.getDate()+d-1);
+  return "Day "+d+" · "+dt.toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+}
+function savedItems(){ return Object.keys(S.saved).filter(isSaved).map(id=>({it:byId(id), s:S.saved[id]})).filter(x=>x.it); }
+function renderMyTrip(){
+  const items = savedItems();
+  if(!items.length){ $("#savedList").innerHTML = `<div class="empty">No saves yet. Go to 🔎 Explore and tap 🤍.</div>`; }
+  else {
+    const order = {Tokyo:1,Kyoto:2,Osaka:3,Anywhere:4};
+    items.sort((a,b)=>(order[a.it.city]-order[b.it.city]) || a.it.name.localeCompare(b.it.name));
+    $("#savedList").innerHTML = `<div class="grid">` + items.map(({it,s})=>cardHTML(it,{extra:
+      `<select data-act="setDay" data-id="${esc(it.id)}">${dayOptions(s.day)}</select>
+       <textarea data-act="setNote" data-id="${esc(it.id)}" placeholder="Notes: who wants it, what to order, booking time…">${esc(s.note||"")}</textarea>
+       ${s.by?`<div class="meta">Added by ${esc(s.by)}</div>`:""}
+       ${it.custom?`<button class="btn small ghost" data-act="delCustom" data-id="${esc(it.id)}">Delete my place</button>`:""}`})).join("") + `</div>`;
+  }
+  $("#syncUrl").value = S.settings.syncUrl||""; $("#syncCode").value = S.settings.code||""; $("#travName").value = S.settings.name||"";
+}
+document.addEventListener("change", e=>{
+  const t=e.target, id=t.dataset && t.dataset.id;
+  if(t.dataset.act==="setDay" && S.saved[id]){ S.saved[id].day=t.value; S.saved[id].u=now(); save(); toast(t.value?"Added to "+dayLabel(t.value):"Removed from plan"); }
+  if(t.dataset.act==="setDay" && current()==="plan") renderPlan();
+  if(t.dataset.act==="setBase"){ S.base=S.base||{}; S.base[id]={city:t.value,u:now()}; save(); renderPlan(); }
+  if(t.id==="yen"||t.id==="rate"){ if(t.id==="rate"){ S.settings.rate=t.value; save(); } convert(); }
+  if(t.dataset.act==="setNote" && S.saved[id]){ S.saved[id].note=t.value; S.saved[id].u=now(); save(); toast("Note saved"); }
+  if(t.id==="syncUrl"){ S.settings.syncUrl=t.value.trim(); save(); }
+  if(t.id==="syncCode"){ S.settings.code=t.value.trim(); save(); }
+  if(t.id==="travName"){ S.settings.name=t.value.trim(); save(); }
+  if(t.id==="startDate"){ S.start=t.value; S.startU=now(); save(); renderPlan(); }
+  if(t.id==="numDays"){ S.days=Math.max(1,Math.min(21,parseInt(t.value,10)||14)); save(); renderPlan(); }
+  if(t.dataset.act==="check"){ const c=S.checklist.find(x=>x.id===id); if(c){ c.done=t.checked; c.u=now(); save(); } }
+});
+$("#addForm").addEventListener("submit", e=>{
+  e.preventDefault(); const f=new FormData(e.target);
+  const it = {id:"c-"+uid(), custom:true, u:now(), city:f.get("city"), cat:f.get("cat"), name:f.get("name").trim(), area:f.get("area").trim(), link:f.get("link").trim(), desc:f.get("desc").trim(), price:"", tags:"my pick"};
+  if(it.link && !/^https?:\/\//i.test(it.link)) it.link="https://"+it.link;
+  S.custom.push(it); S.saved[it.id]={day:"",note:"",u:now(),by:S.settings.name||""}; save(); e.target.reset(); renderMyTrip(); toast("Added 💖");
+});
+
+// plan
+function dayDate(d){ if(!S.start) return null; const dt=new Date(S.start+"T12:00:00"); dt.setDate(dt.getDate()+parseInt(d,10)-1); return dt; }
+function alertsFor(dt, base){
+  if(!dt) return [];
+  const a=[], m=dt.getMonth()+1, day=dt.getDate(), wd=dt.getDay(), y=dt.getFullYear();
+  if(y===2027 && m===3 && day>=14 && day<=28) a.push("🤼 Sumo tournament day in Osaka");
+  if(day===21) a.push("🏮 To-ji flea market in Kyoto today");
+  if(day===25) a.push("🏮 Kitano Tenmangu market in Kyoto today");
+  if(wd===0) a.push("🔪 Many Kappabashi shops close Sundays");
+  if(wd===2 && day>=15 && day<=21) a.push("🔪 Sakai knife museum closed today (3rd Tue)");
+  if(m===3 && day>=20) a.push("🌸 Possible cherry blossoms: hanami spots crowd early");
+  const near={Tokyo:["Kappabashi","🌸"],Kyoto:["Kyoto","Sumo","🌸"],Osaka:["Osaka","Kyoto","Sakai","🌸"]}[base];
+  return near ? a.filter(x=>near.some(k=>x.includes(k))) : a;
+}
+function renderPlan(){
+  $("#startDate").value = S.start||""; $("#numDays").value = S.days;
+  const items = savedItems(); let h="";
+  for(let d=1; d<=S.days; d++){
+    const day = items.filter(x=>String(x.s.day)===String(d));
+    const base = (S.base&&S.base[d]&&S.base[d].city)||"";
+    const al = alertsFor(dayDate(d), base);
+    h += `<div class="day"><b>${esc(dayLabel(d))}</b>
+      <select data-act="setBase" data-id="${d}" aria-label="Base city for day ${d}" style="font-size:13px;padding:4px 6px;margin:4px 0">${["","Tokyo","Kyoto","Osaka","Travel day"].map(c=>`<option value="${c}"${c===base?" selected":""}>${c||"Sleeping in…"}</option>`).join("")}</select>
+      ${al.length?`<div class="note">${al.map(esc).join(" · ")}</div>`:""}
+      ${day.length>4?`<div class="note" style="color:#b3261e">⚠️ ${day.length} stops: probably too many. Move one or two.</div>`:""}
+      ${base && day.some(x=>x.it.city!==base && x.it.city!=="Anywhere" && x.it.cat!=="Day trip" && base!=="Travel day")?`<div class="note" style="color:#b3261e">⚠️ Some stops aren't in ${esc(base)}</div>`:""}
+      ${day.length? day.map(x=>`${CAT_ICON[x.it.cat]||""} <a href="${mapUrl(x.it)}" target="_blank" rel="noopener">${esc(x.it.name)}</a> <span class="note">· ${esc(x.it.city)}${x.s.note?" · "+esc(x.s.note):""}</span>`).join("<br>") : `<span class="note">Free day</span>`}</div>`;
+  }
+  const un = items.filter(x=>!x.s.day);
+  if(un.length) h += `<h3>Saved but not scheduled (${un.length})</h3><div class="box"><ul class="clean">${un.map(x=>`<li><span style="flex:1">${CAT_ICON[x.it.cat]||""} ${esc(x.it.name)} <span class="note">· ${esc(x.it.city)}</span></span><select data-act="setDay" data-id="${esc(x.it.id)}" style="max-width:48%">${dayOptions("")}</select></li>`).join("")}</ul></div>`;
+  $("#planDays").innerHTML = h;
+}
+
+// wanderlog
+function placeLine(it){ return `${it.name}${it.area?" ("+it.area+", "+it.city+")":" ("+it.city+")"}`; }
+function savedSummary(){
+  const items = savedItems();
+  if(!items.length) return "(No saved places yet)";
+  const byDay = {};
+  items.forEach(x=>{ const k = x.s.day ? dayLabel(x.s.day) : "Not scheduled yet"; (byDay[k]=byDay[k]||[]).push(x); });
+  const keys = Object.keys(byDay).sort((a,b)=>{ const na=parseInt(a.replace(/\D+/,""),10)||999, nb=parseInt(b.replace(/\D+/,""),10)||999; return na-nb; });
+  return keys.map(k=>k+":\n"+byDay[k].map(x=>"- "+placeLine(x.it)+" ["+x.it.cat+"]"+(x.s.note?" — note: "+x.s.note:"")).join("\n")).join("\n\n");
+}
+function bookingSummary(){
+  const b = live(S.bookings); if(!b.length) return "(none entered yet)";
+  return b.map(x=>`- ${x.type} ${x.title}${x.date?" on "+x.date:""}${x.time?" "+x.time:""}${x.addr?" at "+x.addr:""}`).join("\n");
+}
+function prompts(){
+  const dates = S.start ? `starting ${S.start} for ${S.days} days` : `for ${S.days} days in March 2027`;
+  const who = "four friends in their mid-20s (first trip to Japan, more into food, shopping, culture and nightlife than hiking)";
+  return [
+   {t:"Build my Wanderlog itinerary", p:
+`I'm planning a Japan trip (Tokyo, Kyoto, Osaka) ${dates} with ${who}. One of us wants to buy a Japanese kitchen knife.
+
+Here are the places I've already saved, grouped by day:
+${savedSummary()}
+
+Here are my bookings:
+${bookingSummary()}
+
+Please:
+1. Put my unscheduled places on the best days, grouping places that are near each other.
+2. Order each day so we're not zigzagging across the city, and flag anything that needs a reservation or timed ticket.
+3. Point out days that are overpacked (more than 4 main stops) and suggest what to cut.
+4. Keep it as a simple day-by-day list I can add to Wanderlog one place at a time.
+Don't invent opening hours. If you're not sure something is open, say "check hours".`},
+   {t:"Fill the gaps near my saves", p:
+`For my Japan trip with ${who}, here are my saved places:
+${savedSummary()}
+
+For each day, suggest 1–2 extra spots within a 10-minute walk of what's already planned: a snack, a unique shop, or a bar. Favor local favorites over tourist chains. Give the exact name and neighborhood so I can find it in Wanderlog. Say if you aren't sure a place still exists.`},
+   {t:"Morning brief (use on the trip)", p:
+`Today we're in [CITY] on our Japan trip, ${who}. Our plan in Wanderlog today is:
+[PASTE TODAY'S PLACES]
+
+The weather is [WEATHER]. Give me: the best order to do these, the train lines between them, one rainy-day backup, a lunch pick near the middle stop, and anything that closes early or needs cash. Keep it under 150 words.`},
+   {t:"Knife shopping helper", p:
+`I'm buying my first Japanese kitchen knife on a trip to Japan. I cook [HOW OFTEN / WHAT], my budget is [AMOUNT] yen, and I'm right-handed. Explain gyuto vs santoku vs petty, stainless vs carbon, and what to ask the shop. Then give me a short checklist to take into the store, plus how to pack it for the flight home (checked bag only).`}
+  ];
+}
+function renderWanderlog(){
+  const steps = [
+   "Create the trip in Wanderlog with your exact dates, then invite your 3 friends as tripmates.",
+   "Add each hotel under Lodging (copy addresses from the 🔐 Vault).",
+   "Add flights and train times. Wanderlog can import reservations from email; check its help page for how.",
+   "Day by day, paste in the places from section 1 below.",
+   "Run the 'Build my Wanderlog itinerary' prompt below to fix the order and catch overpacked days.",
+   "Before you fly, download offline maps (Google Maps offline areas plus Wanderlog's offline option if your plan has it)."
+  ];
+  $("#wlSteps").innerHTML = steps.map((s,i)=>`<li><span class="tag Tokyo">${i+1}</span><span>${esc(s)}</span></li>`).join("");
+  const items = savedItems();
+  let h = "";
+  const days = [...new Set(items.map(x=>x.s.day||""))].sort((a,b)=>(parseInt(a,10)||999)-(parseInt(b,10)||999));
+  if(!items.length) h = `<div class="empty">Save places first, then they'll show up here by day.</div>`;
+  days.forEach(d=>{
+    const list = items.filter(x=>String(x.s.day||"")===String(d)).map(x=>placeLine(x.it)).join("\n");
+    h += `<h4 style="margin:10px 0 4px">${d?esc(dayLabel(d)):"Not scheduled yet"}</h4><pre class="prompt">${esc(list)}</pre><button class="btn small ghost" data-act="copy" data-text="${esc(list)}">📋 Copy</button>`;
+  });
+  $("#wlDays").innerHTML = h;
+  $("#wlPrompts").innerHTML = prompts().map(p=>`<h4 style="margin:12px 0 4px">${esc(p.t)}</h4><pre class="prompt">${esc(p.p)}</pre><button class="btn small" data-act="copy" data-text="${esc(p.p)}">📋 Copy prompt</button>`).join("");
+}
+
+// knives
+function renderKnives(){
+  $("#knifeTips").innerHTML = (window.KNIFE_TIPS||[]).map(t=>`<li>${esc(t)}</li>`).join("");
+  $("#knifeShops").innerHTML = G.filter(x=>x.cat==="Knife").map(it=>cardHTML(it)).join("");
+}
+
+// vault
+$("#bookForm").addEventListener("submit", e=>{
+  e.preventDefault(); const f=new FormData(e.target); const o={id:uid(),u:now(),by:S.settings.name||""};
+  ["type","title","date","time","conf","link","addr","notes"].forEach(k=>o[k]=(f.get(k)||"").trim());
+  if(o.link && !/^https?:\/\//i.test(o.link)) o.link="https://"+o.link;
+  S.bookings.push(o); save(); e.target.reset(); renderVault(); toast("Booking saved");
+});
+function renderVault(){
+  const b = live(S.bookings).sort((x,y)=>(x.date||"9").localeCompare(y.date||"9"));
+  $("#bookList").innerHTML = b.length ? b.map(x=>`<div class="box"><b>${esc(x.type)} ${esc(x.title)}</b><div class="meta">${esc(x.date)} ${esc(x.time)}${x.by?" · added by "+esc(x.by):""}</div>
+   ${x.conf?`<div>Confirmation: <b>${esc(x.conf)}</b> <button class="btn small ghost" data-act="copy" data-text="${esc(x.conf)}">Copy</button></div>`:""}
+   ${x.addr?`<div>📍 <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(x.addr)}" target="_blank" rel="noopener">${esc(x.addr)}</a></div>`:""}
+   ${x.link?`<div><a href="${esc(x.link)}" target="_blank" rel="noopener">Open booking</a></div>`:""}
+   ${x.notes?`<div class="note">${esc(x.notes)}</div>`:""}
+   <button class="btn small ghost" data-act="delBook" data-id="${esc(x.id)}" style="margin-top:6px">Delete</button></div>`).join("") : `<div class="empty">No bookings yet.</div>`;
+  $("#checklist").innerHTML = live(S.checklist).map(c=>`<li><input type="checkbox" data-act="check" data-id="${esc(c.id)}"${c.done?" checked":""}><span>${esc(c.t)}</span><button class="btn small ghost" data-act="delCheck" data-id="${esc(c.id)}" style="margin-left:auto">✕</button></li>`).join("");
+}
+
+// actions
+async function copyText(t){ try{ await navigator.clipboard.writeText(t); toast("Copied 📋"); }catch(e){ const ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); toast("Copied 📋");}catch(_){ toast("Copy blocked — select and copy by hand"); } ta.remove(); } }
+function syncable(){ return {saved:S.saved, custom:S.custom, bookings:S.bookings, checklist:S.checklist, base:S.base||{}, start:S.start, startU:S.startU||0, days:S.days}; }
+function mergeIn(r){
+  if(!r || typeof r!=="object") return 0; let n=0;
+  Object.entries(r.saved||{}).forEach(([id,v])=>{ const l=S.saved[id]; if(!l || (v.u||0)>(l.u||0)){ S.saved[id]=v; n++; } });
+  ["custom","bookings","checklist"].forEach(k=>{ const m=new Map((S[k]||[]).map(x=>[x.id,x])); (r[k]||[]).forEach(x=>{ const l=m.get(x.id); if(!l || (x.u||0)>(l.u||0)){ m.set(x.id,x); n++; } }); S[k]=[...m.values()]; });
+  S.base=S.base||{}; Object.entries(r.base||{}).forEach(([k,v])=>{ const l=S.base[k]; if(!l||(v.u||0)>(l.u||0)){ S.base[k]=v; n++; } });
+  dedupeChecklist();
+  if(r.start && (r.startU||0)>(S.startU||0)){ S.start=r.start; S.startU=r.startU; S.days=r.days||S.days; }
+  save(); return n;
+}
+document.addEventListener("click", async e=>{
+  const b = e.target.closest("[data-act]"); if(!b || b.tagName==="SELECT" || b.tagName==="TEXTAREA" || b.type==="checkbox") return;
+  const id = b.dataset.id, act = b.dataset.act;
+  if(act==="toggle"){ if(isSaved(id)){ S.saved[id]={...S.saved[id], del:1, u:now()}; toast("Removed"); } else { S.saved[id]={day:"",note:"",u:now(),by:S.settings.name||""}; toast("Saved 💖"); } save(); render(current()); }
+  if(act==="delCustom"){ const c=S.custom.find(x=>x.id===id); if(c){ c.del=1; c.u=now(); } if(S.saved[id]){ S.saved[id].del=1; S.saved[id].u=now(); } save(); renderMyTrip(); }
+  if(act==="delBook"){ const c=S.bookings.find(x=>x.id===id); if(c){ c.del=1; c.u=now(); save(); renderVault(); } }
+  if(act==="delCheck"){ const c=S.checklist.find(x=>x.id===id); if(c){ c.del=1; c.u=now(); save(); renderVault(); } }
+  if(act==="addCheck"){ const v=$("#newCheck").value.trim(); if(v){ S.checklist.push({id:uid(),t:v,done:false,u:now()}); $("#newCheck").value=""; save(); renderVault(); } }
+  if(act==="copy"){ copyText(b.dataset.text||""); }
+  if(act==="exportCopy"){ copyText(JSON.stringify(S)); }
+  if(act==="exportFile" && window.self!==window.top){ copyText(JSON.stringify(S)); toast("Preview can't download. Backup copied; paste it into a note."); return; }
+  if(act==="exportFile"){ try{ const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="lily-japan-backup-"+new Date().toISOString().slice(0,10)+".json"; document.body.appendChild(a); a.click(); a.remove(); toast("Backup downloaded"); }catch(_){ copyText(JSON.stringify(S)); } }
+  if(act==="shareLink"){ const ids=Object.keys(S.saved).filter(isSaved).filter(i=>!i.startsWith("c-")); if(!ids.length){ toast("Save some places first"); return; } copyText(location.href.split("#")[0]+"#add-"+ids.join("-").replace(/[^a-z0-9-]/gi,"")); }
+  if(act==="genCode"){ S.settings.code="lily-"+uid()+uid(); save(); $("#syncCode").value=S.settings.code; toast("New code made. Share it with your friends."); }
+  if(act==="push" || act==="pull"){
+    const url=S.settings.syncUrl, code=S.settings.code, st=$("#syncStatus");
+    if(!url || !code || code.length<8){ st.textContent="Add the Apps Script URL and a trip code (8+ characters) first."; return; }
+    st.textContent = act==="push" ? "Sending…" : "Getting…";
+    try{
+      const r = await fetch(url+(url.includes("?")?"&":"?")+"code="+encodeURIComponent(code)); const remote = await r.json();
+      const n = mergeIn(remote);
+      if(act==="push"){ const p = await fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({code,data:syncable()})}); const j=await p.json(); if(!j.ok) throw new Error(j.error||"save failed"); st.textContent="Sent ✓ "+new Date().toLocaleTimeString()+(n?` (also pulled in ${n} group changes)`:""); }
+      else st.textContent = "Up to date ✓ "+n+" changes pulled in at "+new Date().toLocaleTimeString();
+      render(current());
+    }catch(err){ st.textContent="Sync didn't work: "+err.message+". Check the URL, and note that sync only works on the published GitHub site."; }
+  }
+});
+$("#importFile").addEventListener("change", e=>{
+  const f=e.target.files[0]; if(!f) return; const rd=new FileReader();
+  rd.onload=()=>{ try{ const n=mergeIn(JSON.parse(rd.result)); toast("Restored "+n+" items"); render(current()); }catch(_){ toast("That file isn't a trip backup"); } };
+  rd.readAsText(f); e.target.value="";
+});
+
+// share link import: #add-id1-id2 (ids contain a dash, so split on known ids)
+function handleHash(){
+  const h=location.hash.slice(1);
+  if(h.startsWith("add-")){
+    const s=h.slice(4); let n=0;
+    G.forEach(it=>{ if(("-"+s+"-").includes("-"+it.id+"-") && !isSaved(it.id)){ S.saved[it.id]={day:"",note:"Shared by a friend",u:now(),by:""}; n++; } });
+    save(); toast(n?`Added ${n} places from a friend 💖`:"You already have those"); try{history.replaceState(null,"","#mytrip");}catch(_){}; showTab("mytrip"); return true;
+  }
+  const t=document.querySelector(`nav button[data-tab="${h}"]`); if(t){ showTab(h); return true; } return false;
+}
+function convert(){ const y=parseFloat($("#yen").value), r=parseFloat($("#rate").value); $("#usd").textContent=(y>0&&r>0)?"≈ $"+(y/r).toFixed(2):""; }
+function current(){ const b=document.querySelector("nav button.on"); return b?b.dataset.tab:"explore"; }
+function render(name){ ({explore:renderExplore,mytrip:renderMyTrip,plan:renderPlan,wanderlog:renderWanderlog,knives:renderKnives,vault:renderVault,tips:()=>{ $("#rate").value=S.settings.rate||""; convert(); },hotels:()=>{}}[name]||(()=>{}))(); }
+if(!handleHash()) renderExplore();
+window.addEventListener("hashchange", handleHash);
+if("serviceWorker" in navigator && location.protocol==="https:" && !/claude/.test(location.host)){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
+})();
+</script>
+</body>
+</html>
