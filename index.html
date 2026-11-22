@@ -56,6 +56,9 @@ th{font-size:12px;color:var(--mute);text-transform:uppercase}
 .row>*{flex:1 1 150px}
 .day{border-left:4px solid var(--pink2);padding:6px 10px;margin:8px 0;background:#fff;border-radius:0 12px 12px 0}
 .day b{display:block}
+.stop{display:flex;gap:4px;align-items:center;margin:3px 0}
+.stop .btn{padding:2px 8px;line-height:1.2}
+.stop .btn[disabled]{opacity:.35;cursor:default}
 ul.clean{list-style:none;padding:0;margin:0}
 ul.clean li{padding:6px 0;border-bottom:1px dashed var(--line);display:flex;gap:8px;align-items:center}
 pre.prompt{white-space:pre-wrap;background:#2b2335;color:#ffe9ee;border-radius:12px;padding:12px;font-size:13px;max-height:300px;overflow:auto}
@@ -109,12 +112,13 @@ footer{text-align:center;font-size:12px;color:var(--mute);padding:20px}
 <!-- MY TRIP -->
 <section id="mytrip">
  <h2>My saved places</h2>
+ <div id="backupNag"></div>
  <p class="note">Tap 💖 on any card to save it here. Notes and day picks save automatically on this phone.</p>
  <div id="savedList"></div>
  <h3>Add your own place</h3>
  <form id="addForm" class="box">
   <div class="row"><input name="name" placeholder="Place name" required><select name="city"><option>Tokyo</option><option>Kyoto</option><option>Osaka</option><option>Anywhere</option></select><select name="cat"><option>Eat</option><option>Drink</option><option>Shop</option><option>Knife</option><option>Do</option><option>See</option><option>Day trip</option></select></div>
-  <div class="row" style="margin-top:8px"><input name="area" placeholder="Neighborhood (optional)"><input name="link" placeholder="Link (TikTok, Instagram, Maps)"></div>
+  <div class="row" style="margin-top:8px"><input name="area" placeholder="Neighborhood (optional)"><input name="addr" placeholder="Address or Japanese name (optional)"><input name="link" placeholder="Link (TikTok, Instagram, Maps)"></div>
   <textarea name="desc" placeholder="Why it's on the list" style="margin-top:8px"></textarea>
   <button class="btn" type="submit" style="margin-top:8px">Add to my trip</button>
  </form>
@@ -155,13 +159,13 @@ footer{text-align:center;font-size:12px;color:var(--mute);padding:20px}
   <ul class="clean" id="wlSteps"></ul>
  </div>
  <div class="box">
-  <h3 style="margin-top:0">1. Places to add, by day</h3>
-  <p class="note">Copy a day, then in Wanderlog open that day and search each name. Names include the neighborhood so the right pin comes up.</p>
+  <h3 style="margin-top:0">1. Add to Wanderlog, one day at a time</h3>
+  <p class="note">Copy a day and paste it into Wanderlog's AI assistant. Each place has its Japanese name and neighborhood so the right pin comes up. Change the order on the 🗓️ Plan tab.</p>
   <div id="wlDays"></div>
  </div>
  <div class="box">
-  <h3 style="margin-top:0">2. Copy-paste prompts</h3>
-  <p class="note">Paste into Wanderlog's AI assistant, Claude or ChatGPT. They fill in your saved places automatically.</p>
+  <h3 style="margin-top:0">2. Bigger prompts</h3>
+  <p class="note">Paste into Wanderlog's AI assistant, Claude or ChatGPT. Your saved places, days and hotels fill in automatically.</p>
   <div id="wlPrompts"></div>
  </div>
 </section>
@@ -267,102 +271,103 @@ footer{text-align:center;font-size:12px;color:var(--mute);padding:20px}
 <div id="toast" role="status"></div>
 <script>
 // Lily's Japan Trip — guide data. Edit freely: each entry is one card.
+// ja = Japanese name (optional). It helps Wanderlog and Google Maps find the right pin.
 // price: ¥ = under ¥1,500 pp, ¥¥ = ¥1,500–5,000, ¥¥¥ = ¥5,000+
 // Hours, prices and closures change. Check Google Maps before going.
 window.GUIDE = [
 // ---------------- TOKYO: EAT ----------------
-{id:"t-fuunji",city:"Tokyo",cat:"Eat",name:"Fuunji",area:"Shinjuku",price:"¥",desc:"Cult tsukemen (dipping ramen) with a thick fish-and-pork broth. Line moves fast.",order:"Tokusei tsukemen; ask for soup-wari (broth top-up) at the end.",tags:"ramen tsukemen noodles local favorite"},
-{id:"t-tsujihan",city:"Tokyo",cat:"Eat",name:"Tsujihan",area:"Nihonbashi",price:"¥¥",desc:"A heaping seafood rice bowl that ends with hot sea-bream broth poured over the leftovers.",order:"Zeitakudon (the 'luxury' bowl), ume or take size.",tags:"seafood kaisendon sashimi lunch"},
-{id:"t-uogashi",city:"Tokyo",cat:"Eat",name:"Uogashi Nihon-Ichi (standing sushi)",area:"Shibuya",price:"¥",desc:"Stand-up sushi counter where you order piece by piece from the chef. Cheap and very local.",order:"Fatty tuna, salmon, seared engawa; point at what looks good.",tags:"sushi standing cheap counter"},
-{id:"t-omoide",city:"Tokyo",cat:"Eat",name:"Omoide Yokocho",area:"Shinjuku",price:"¥¥",desc:"Smoky lantern-lit alley of tiny yakitori stalls by Shinjuku Station. Go 5–7 pm before it packs.",order:"Negima, tsukune, a highball. Expect a small seat charge.",tags:"yakitori alley izakaya night photos"},
-{id:"t-gyozaro",city:"Tokyo",cat:"Eat",name:"Harajuku Gyoza-ro",area:"Harajuku",price:"¥",desc:"Two kinds of gyoza and nothing else, done perfectly. Easy cheap stop between shopping.",order:"Yaki (pan-fried) and sui (boiled), plus cucumber with miso.",tags:"gyoza dumplings cheap"},
-{id:"t-narikura",city:"Tokyo",cat:"Eat",name:"Tonkatsu Narikura",area:"Takadanobaba",price:"¥¥",desc:"Pale, juicy, low-temp tonkatsu that locals line up for. Arrive before opening.",order:"Rosu (loin) katsu set; try the salt.",tags:"tonkatsu pork local favorite line"},
-{id:"t-kikanbo",city:"Tokyo",cat:"Eat",name:"Kikanbo",area:"Kanda",price:"¥",desc:"Spicy miso ramen where you pick separate heat and numbing levels. Taiko drums on the speakers.",order:"Kara-shibi miso ramen; start at 'futsu' (normal) heat.",tags:"ramen spicy miso"},
-{id:"t-monja",city:"Tokyo",cat:"Eat",name:"Tsukishima Monja Street",area:"Tsukishima",price:"¥¥",desc:"A whole street of monjayaki spots where you cook a gooey savory pancake on your own griddle. Great for a group of four.",order:"Mentaiko mochi cheese monja.",tags:"monjayaki griddle group fun"},
-{id:"t-tsukiji",city:"Tokyo",cat:"Eat",name:"Tsukiji Outer Market breakfast",area:"Tsukiji",price:"¥¥",desc:"Graze stalls for breakfast. Most shops close by early afternoon.",order:"Tamagoyaki on a stick, uni or tuna bowl, strawberry daifuku.",tags:"market breakfast seafood street food"},
-{id:"t-depachika",city:"Tokyo",cat:"Eat",name:"Isetan Shinjuku depachika",area:"Shinjuku",price:"¥¥",desc:"Department-store food basement: jewel-box sweets, bento and gifts. Discounts on bento near closing.",order:"Fruit sando, seasonal wagashi, a bento for the train.",tags:"food hall sweets bento gifts department store"},
-{id:"t-ebisuyoko",city:"Tokyo",cat:"Eat",name:"Ebisu Yokocho",area:"Ebisu",price:"¥¥",desc:"Indoor alley of small izakaya stalls. Loud, friendly, easy to share plates with strangers.",order:"Whatever the stall next to you is grilling, plus a lemon sour.",tags:"izakaya alley night group"},
+{id:"t-fuunji",city:"Tokyo",cat:"Eat",name:"Fuunji",ja:"風雲児",area:"Shinjuku",price:"¥",desc:"Cult tsukemen (dipping ramen) with a thick fish-and-pork broth. Line moves fast.",order:"Tokusei tsukemen; ask for soup-wari (broth top-up) at the end.",tags:"ramen tsukemen noodles local favorite"},
+{id:"t-tsujihan",city:"Tokyo",cat:"Eat",name:"Tsujihan",ja:"つじ半",area:"Nihonbashi",price:"¥¥",desc:"A heaping seafood rice bowl that ends with hot sea-bream broth poured over the leftovers.",order:"Zeitakudon (the 'luxury' bowl), ume or take size.",tags:"seafood kaisendon sashimi lunch"},
+{id:"t-uogashi",city:"Tokyo",cat:"Eat",name:"Uogashi Nihon-Ichi (standing sushi)",ja:"魚がし日本一 渋谷",area:"Shibuya",price:"¥",desc:"Stand-up sushi counter where you order piece by piece from the chef. Cheap and very local.",order:"Fatty tuna, salmon, seared engawa; point at what looks good.",tags:"sushi standing cheap counter"},
+{id:"t-omoide",city:"Tokyo",cat:"Eat",name:"Omoide Yokocho",ja:"思い出横丁",area:"Shinjuku",price:"¥¥",desc:"Smoky lantern-lit alley of tiny yakitori stalls by Shinjuku Station. Go 5–7 pm before it packs.",order:"Negima, tsukune, a highball. Expect a small seat charge.",tags:"yakitori alley izakaya night photos"},
+{id:"t-gyozaro",city:"Tokyo",cat:"Eat",name:"Harajuku Gyoza-ro",ja:"原宿餃子楼",area:"Harajuku",price:"¥",desc:"Two kinds of gyoza and nothing else, done perfectly. Easy cheap stop between shopping.",order:"Yaki (pan-fried) and sui (boiled), plus cucumber with miso.",tags:"gyoza dumplings cheap"},
+{id:"t-narikura",city:"Tokyo",cat:"Eat",name:"Tonkatsu Narikura",ja:"とんかつ成蔵",area:"Takadanobaba",price:"¥¥",desc:"Pale, juicy, low-temp tonkatsu that locals line up for. Arrive before opening.",order:"Rosu (loin) katsu set; try the salt.",tags:"tonkatsu pork local favorite line"},
+{id:"t-kikanbo",city:"Tokyo",cat:"Eat",name:"Kikanbo",ja:"鬼金棒",area:"Kanda",price:"¥",desc:"Spicy miso ramen where you pick separate heat and numbing levels. Taiko drums on the speakers.",order:"Kara-shibi miso ramen; start at 'futsu' (normal) heat.",tags:"ramen spicy miso"},
+{id:"t-monja",city:"Tokyo",cat:"Eat",name:"Tsukishima Monja Street",ja:"月島もんじゃストリート",area:"Tsukishima",price:"¥¥",desc:"A whole street of monjayaki spots where you cook a gooey savory pancake on your own griddle. Great for a group of four.",order:"Mentaiko mochi cheese monja.",tags:"monjayaki griddle group fun"},
+{id:"t-tsukiji",city:"Tokyo",cat:"Eat",name:"Tsukiji Outer Market breakfast",ja:"築地場外市場",area:"Tsukiji",price:"¥¥",desc:"Graze stalls for breakfast. Most shops close by early afternoon.",order:"Tamagoyaki on a stick, uni or tuna bowl, strawberry daifuku.",tags:"market breakfast seafood street food"},
+{id:"t-depachika",city:"Tokyo",cat:"Eat",name:"Isetan Shinjuku depachika",ja:"伊勢丹新宿店",area:"Shinjuku",price:"¥¥",desc:"Department-store food basement: jewel-box sweets, bento and gifts. Discounts on bento near closing.",order:"Fruit sando, seasonal wagashi, a bento for the train.",tags:"food hall sweets bento gifts department store"},
+{id:"t-ebisuyoko",city:"Tokyo",cat:"Eat",name:"Ebisu Yokocho",ja:"恵比寿横丁",area:"Ebisu",price:"¥¥",desc:"Indoor alley of small izakaya stalls. Loud, friendly, easy to share plates with strangers.",order:"Whatever the stall next to you is grilling, plus a lemon sour.",tags:"izakaya alley night group"},
 // ---------------- TOKYO: DRINK / NIGHT ----------------
-{id:"t-goldengai",city:"Tokyo",cat:"Drink",name:"Golden Gai",area:"Shinjuku",price:"¥¥",desc:"About 200 tiny bars, most seating 6–10. Look for 'Welcome' or English signs; cover charges are common.",order:"One drink per bar, then hop.",tags:"bars nightlife tiny bars"},
+{id:"t-goldengai",city:"Tokyo",cat:"Drink",name:"Golden Gai",ja:"新宿ゴールデン街",area:"Shinjuku",price:"¥¥",desc:"About 200 tiny bars, most seating 6–10. Look for 'Welcome' or English signs; cover charges are common.",order:"One drink per bar, then hop.",tags:"bars nightlife tiny bars"},
 {id:"t-benfiddich",city:"Tokyo",cat:"Drink",name:"Bar Benfiddich",area:"Nishi-Shinjuku",price:"¥¥¥",desc:"Splurge cocktail bar using herbs the bartender grows and forages. Small, so go early or reserve.",order:"Tell them flavors you like; skip the menu.",tags:"cocktails splurge craft"},
 {id:"t-sgclub",city:"Tokyo",cat:"Drink",name:"The SG Club",area:"Shibuya",price:"¥¥¥",desc:"World-ranked cocktail bar with a relaxed upstairs and a cozier downstairs bar.",order:"House highballs or a signature cocktail.",tags:"cocktails world best bar"},
-{id:"t-nonbei",city:"Tokyo",cat:"Drink",name:"Nonbei Yokocho",area:"Shibuya",price:"¥¥",desc:"'Drunkard's Alley': a lantern-lined lane of tiny bars right by Shibuya Station.",order:"Sake or umeshu.",tags:"bars alley nightlife"},
+{id:"t-nonbei",city:"Tokyo",cat:"Drink",name:"Nonbei Yokocho",ja:"のんべい横丁",area:"Shibuya",price:"¥¥",desc:"'Drunkard's Alley': a lantern-lined lane of tiny bars right by Shibuya Station.",order:"Sake or umeshu.",tags:"bars alley nightlife"},
 {id:"t-karaoke",city:"Tokyo",cat:"Do",name:"Private-room karaoke",area:"Shibuya / Shinjuku",price:"¥¥",desc:"A must for a group of four. Book a room by the hour; many have all-you-can-drink plans.",order:"Nomihodai (drink plan) for 2 hours.",tags:"karaoke night group fun"},
 // ---------------- TOKYO: SHOPS ----------------
-{id:"t-kappabashi",city:"Tokyo",cat:"Knife",name:"Kappabashi Kitchen Town",area:"Asakusa",price:"¥¥¥",desc:"A whole street of chef-supply stores: knives, ceramics, and the plastic fake food you see in windows. Best one-stop knife street in Tokyo.",order:"Compare a few knife shops here before buying. Many close Sundays.",tags:"knife kitchen cookware fake food shopping"},
-{id:"t-kamaasa",city:"Tokyo",cat:"Knife",name:"Kama-Asa",area:"Kappabashi",price:"¥¥¥",desc:"Old Kappabashi shop (since 1908) with a clean, curated knife wall and staff who explain steel types. Free name engraving on many knives.",order:"Ask to hold a 210 mm gyuto and a santoku side by side.",tags:"knife engraving gift"},
-{id:"t-kamata",city:"Tokyo",cat:"Knife",name:"Kamata Hakensha",area:"Kappabashi",price:"¥¥¥",desc:"Family knife shop with a huge range, many price points, and in-house sharpening.",order:"Their own-brand stainless gyuto is good value.",tags:"knife sharpening"},
-{id:"t-kiya",city:"Tokyo",cat:"Knife",name:"Nihonbashi Kiya",area:"Nihonbashi (COREDO Muromachi)",price:"¥¥¥",desc:"Blade shop dating to 1792: kitchen knives, scissors, and beautiful nail clippers that make good small gifts.",order:"Pair a knife with a gift-boxed pair of scissors.",tags:"knife history gift scissors"},
-{id:"t-itoya",city:"Tokyo",cat:"Shop",name:"Ginza Itoya",area:"Ginza",price:"¥¥",desc:"12 floors of stationery: washi paper, pens, letter sets. Make your own custom notebook.",order:"Custom notebook bar; Japanese pens.",tags:"stationery paper gifts"},
-{id:"t-loft",city:"Tokyo",cat:"Shop",name:"Shibuya Loft and Tokyu Hands",area:"Shibuya",price:"¥¥",desc:"Floors of clever Japanese gadgets, beauty products, stationery and home goods. Easy souvenir haul.",order:"Face masks, sunscreen, gadgets you didn't know existed.",tags:"beauty gadgets souvenirs skincare"},
-{id:"t-donki",city:"Tokyo",cat:"Shop",name:"Don Quijote (MEGA Shibuya)",area:"Shibuya",price:"¥",desc:"Chaotic, open-late discount store: snacks, beauty, costumes, Kit Kat flavors. Fun at 11 pm.",order:"Regional Kit Kats, cosmetics, snacks for home.",tags:"souvenirs snacks late night cheap"},
-{id:"t-beamsjapan",city:"Tokyo",cat:"Shop",name:"BEAMS Japan",area:"Shinjuku",price:"¥¥",desc:"Floors of things made in Japan: crafts, folk art, fashion and food. Souvenirs that don't feel touristy.",order:"Ceramics and small crafts floor.",tags:"crafts made in japan fashion gifts"},
-{id:"t-nakano",city:"Tokyo",cat:"Shop",name:"Nakano Broadway",area:"Nakano",price:"¥¥",desc:"Old shopping mall packed with anime, vintage toys, watches and collectibles. Less touristy than Akihabara.",order:"Mandarake shops for vintage manga and figures.",tags:"anime vintage collectibles toys"},
-{id:"t-gacha",city:"Tokyo",cat:"Shop",name:"Gashapon Department Store",area:"Ikebukuro (Sunshine City)",price:"¥",desc:"Thousands of capsule-toy machines in one place. Bring ¥100 coins (there are change machines).",order:"Set a ¥2,000 limit each and trade with friends.",tags:"capsule toys gacha cheap fun"},
-{id:"t-shimokita",city:"Tokyo",cat:"Shop",name:"Shimokitazawa",area:"Setagaya",price:"¥¥",desc:"Vintage and thrift stores, record shops, small coffee bars. Tokyo's indie neighborhood.",order:"Wander the side streets; reload station area has newer shops.",tags:"vintage thrift coffee neighborhood"},
-{id:"t-koenji",city:"Tokyo",cat:"Shop",name:"Koenji",area:"Suginami",price:"¥",desc:"Punk and vintage shopping arcades by day, tiny bars and live music by night.",order:"Look Street for vintage; izakaya under the tracks after.",tags:"vintage nightlife neighborhood"},
-{id:"t-kiddyland",city:"Tokyo",cat:"Shop",name:"Kiddy Land Harajuku",area:"Harajuku",price:"¥¥",desc:"Multi-floor character store: Sanrio, Ghibli, Snoopy, Rilakkuma.",order:"Then walk Cat Street toward Shibuya for boutiques.",tags:"sanrio character cute"},
+{id:"t-kappabashi",city:"Tokyo",cat:"Knife",name:"Kappabashi Kitchen Town",ja:"かっぱ橋道具街",area:"Asakusa",price:"¥¥¥",desc:"A whole street of chef-supply stores: knives, ceramics, and the plastic fake food you see in windows. Best one-stop knife street in Tokyo.",order:"Compare a few knife shops here before buying. Many close Sundays.",tags:"knife kitchen cookware fake food shopping"},
+{id:"t-kamaasa",city:"Tokyo",cat:"Knife",name:"Kama-Asa",ja:"釜浅商店",area:"Kappabashi",price:"¥¥¥",desc:"Old Kappabashi shop (since 1908) with a clean, curated knife wall and staff who explain steel types. Free name engraving on many knives.",order:"Ask to hold a 210 mm gyuto and a santoku side by side.",tags:"knife engraving gift"},
+{id:"t-kamata",city:"Tokyo",cat:"Knife",name:"Kamata Hakensha",ja:"かまた刃研社",area:"Kappabashi",price:"¥¥¥",desc:"Family knife shop with a huge range, many price points, and in-house sharpening.",order:"Their own-brand stainless gyuto is good value.",tags:"knife sharpening"},
+{id:"t-kiya",city:"Tokyo",cat:"Knife",name:"Nihonbashi Kiya",ja:"日本橋木屋",area:"Nihonbashi (COREDO Muromachi)",price:"¥¥¥",desc:"Blade shop dating to 1792: kitchen knives, scissors, and beautiful nail clippers that make good small gifts.",order:"Pair a knife with a gift-boxed pair of scissors.",tags:"knife history gift scissors"},
+{id:"t-itoya",city:"Tokyo",cat:"Shop",name:"Ginza Itoya",ja:"銀座伊東屋",area:"Ginza",price:"¥¥",desc:"12 floors of stationery: washi paper, pens, letter sets. Make your own custom notebook.",order:"Custom notebook bar; Japanese pens.",tags:"stationery paper gifts"},
+{id:"t-loft",city:"Tokyo",cat:"Shop",name:"Shibuya Loft and Tokyu Hands",ja:"渋谷ロフト",area:"Shibuya",price:"¥¥",desc:"Floors of clever Japanese gadgets, beauty products, stationery and home goods. Easy souvenir haul.",order:"Face masks, sunscreen, gadgets you didn't know existed.",tags:"beauty gadgets souvenirs skincare"},
+{id:"t-donki",city:"Tokyo",cat:"Shop",name:"Don Quijote (MEGA Shibuya)",ja:"MEGAドン・キホーテ渋谷本店",area:"Shibuya",price:"¥",desc:"Chaotic, open-late discount store: snacks, beauty, costumes, Kit Kat flavors. Fun at 11 pm.",order:"Regional Kit Kats, cosmetics, snacks for home.",tags:"souvenirs snacks late night cheap"},
+{id:"t-beamsjapan",city:"Tokyo",cat:"Shop",name:"BEAMS Japan",ja:"ビームス ジャパン",area:"Shinjuku",price:"¥¥",desc:"Floors of things made in Japan: crafts, folk art, fashion and food. Souvenirs that don't feel touristy.",order:"Ceramics and small crafts floor.",tags:"crafts made in japan fashion gifts"},
+{id:"t-nakano",city:"Tokyo",cat:"Shop",name:"Nakano Broadway",ja:"中野ブロードウェイ",area:"Nakano",price:"¥¥",desc:"Old shopping mall packed with anime, vintage toys, watches and collectibles. Less touristy than Akihabara.",order:"Mandarake shops for vintage manga and figures.",tags:"anime vintage collectibles toys"},
+{id:"t-gacha",city:"Tokyo",cat:"Shop",name:"Gashapon Department Store",ja:"ガシャポンのデパート 池袋総本店",area:"Ikebukuro (Sunshine City)",price:"¥",desc:"Thousands of capsule-toy machines in one place. Bring ¥100 coins (there are change machines).",order:"Set a ¥2,000 limit each and trade with friends.",tags:"capsule toys gacha cheap fun"},
+{id:"t-shimokita",city:"Tokyo",cat:"Shop",name:"Shimokitazawa",ja:"下北沢",area:"Setagaya",price:"¥¥",desc:"Vintage and thrift stores, record shops, small coffee bars. Tokyo's indie neighborhood.",order:"Wander the side streets; reload station area has newer shops.",tags:"vintage thrift coffee neighborhood"},
+{id:"t-koenji",city:"Tokyo",cat:"Shop",name:"Koenji",ja:"高円寺",area:"Suginami",price:"¥",desc:"Punk and vintage shopping arcades by day, tiny bars and live music by night.",order:"Look Street for vintage; izakaya under the tracks after.",tags:"vintage nightlife neighborhood"},
+{id:"t-kiddyland",city:"Tokyo",cat:"Shop",name:"Kiddy Land Harajuku",ja:"キデイランド原宿店",area:"Harajuku",price:"¥¥",desc:"Multi-floor character store: Sanrio, Ghibli, Snoopy, Rilakkuma.",order:"Then walk Cat Street toward Shibuya for boutiques.",tags:"sanrio character cute"},
 {id:"t-purikura",city:"Tokyo",cat:"Do",name:"Purikura photo booths",area:"Harajuku / Shibuya",price:"¥",desc:"Japanese photo-sticker booths with wild beauty filters. Perfect four-friend souvenir.",order:"Takeshita Street arcades have floors of them.",tags:"photo booth fun group cute"},
-{id:"t-yanaka",city:"Tokyo",cat:"See",name:"Yanaka Ginza",area:"Yanaka",price:"¥",desc:"Old-Tokyo shopping street that survived the war: snacks, crafts, street cats. A slower, prettier side of the city.",order:"Menchi-katsu croquette from a street stall.",tags:"old tokyo shopping street snacks"},
-{id:"t-gotokuji",city:"Tokyo",cat:"See",name:"Gotokuji Temple",area:"Setagaya",price:"¥",desc:"Temple covered in thousands of white beckoning-cat (maneki-neko) figures. Pair with Shimokitazawa.",order:"Buy a small cat figure to leave or take home.",tags:"temple cats unique photos"},
-{id:"t-kabuki",city:"Tokyo",cat:"Do",name:"Kabuki-za single-act seats",area:"Ginza",price:"¥¥",desc:"Buy a same-day ticket for one act instead of a full show. Rent the English audio guide.",order:"Makumi-seki (single act) tickets, sold day-of.",tags:"theater culture kabuki"},
+{id:"t-yanaka",city:"Tokyo",cat:"See",name:"Yanaka Ginza",ja:"谷中銀座",area:"Yanaka",price:"¥",desc:"Old-Tokyo shopping street that survived the war: snacks, crafts, street cats. A slower, prettier side of the city.",order:"Menchi-katsu croquette from a street stall.",tags:"old tokyo shopping street snacks"},
+{id:"t-gotokuji",city:"Tokyo",cat:"See",name:"Gotokuji Temple",ja:"豪徳寺",area:"Setagaya",price:"¥",desc:"Temple covered in thousands of white beckoning-cat (maneki-neko) figures. Pair with Shimokitazawa.",order:"Buy a small cat figure to leave or take home.",tags:"temple cats unique photos"},
+{id:"t-kabuki",city:"Tokyo",cat:"Do",name:"Kabuki-za single-act seats",ja:"歌舞伎座",area:"Ginza",price:"¥¥",desc:"Buy a same-day ticket for one act instead of a full show. Rent the English audio guide.",order:"Makumi-seki (single act) tickets, sold day-of.",tags:"theater culture kabuki"},
 {id:"t-sento",city:"Tokyo",cat:"Do",name:"Neighborhood sento bath",area:"Various",price:"¥",desc:"Old public bathhouse for about ¥550. Bring a small towel. Some ban tattoos, so check first.",order:"Then a bottle of coffee milk, the classic after-bath drink.",tags:"bath sento culture relaxing"},
-{id:"t-teamlab",city:"Tokyo",cat:"See",name:"teamLab Planets",area:"Toyosu",price:"¥¥",desc:"Popular, but worth it: walk barefoot through water and light rooms. Book a timed slot ahead.",order:"Wear shorts or pants that roll up.",tags:"art immersive popular book ahead"},
-{id:"t-shibuyasky",city:"Tokyo",cat:"See",name:"Shibuya Sky at sunset",area:"Shibuya",price:"¥¥",desc:"Open-air rooftop over the Scramble. Sunset slots sell out, so book about 4 weeks ahead.",order:"Book the slot 30 min before sunset.",tags:"view rooftop popular book ahead"},
-{id:"t-nakameguro",city:"Tokyo",cat:"See",name:"Nakameguro canal",area:"Meguro",price:"¥¥",desc:"Canal lined with cafes and boutiques; the most famous sakura tunnel in Tokyo if blooms line up (late March).",order:"Coffee to go and a slow walk.",tags:"cafes sakura walk boutiques"},
-{id:"t-kamakura",city:"Tokyo",cat:"Day trip",name:"Kamakura and Enoshima",area:"1 hr from Tokyo",price:"¥¥",desc:"Giant Buddha, temple streets, and a beach-town vibe. Ride the little Enoden train along the coast.",order:"Shirasu (whitebait) rice bowl in Enoshima.",tags:"day trip beach temples train"},
-{id:"t-hakone",city:"Tokyo",cat:"Day trip",name:"Hakone overnight",area:"1.5 hr from Tokyo",price:"¥¥¥",desc:"Hot springs, ropeway, a pirate-ship lake cruise and Mt Fuji views on clear days. Best as one night in a ryokan.",order:"Hakone Free Pass covers most transport.",tags:"onsen ryokan fuji day trip"},
+{id:"t-teamlab",city:"Tokyo",cat:"See",name:"teamLab Planets",ja:"チームラボプラネッツ",area:"Toyosu",price:"¥¥",desc:"Popular, but worth it: walk barefoot through water and light rooms. Book a timed slot ahead.",order:"Wear shorts or pants that roll up.",tags:"art immersive popular book ahead"},
+{id:"t-shibuyasky",city:"Tokyo",cat:"See",name:"Shibuya Sky at sunset",ja:"渋谷スカイ",area:"Shibuya",price:"¥¥",desc:"Open-air rooftop over the Scramble. Sunset slots sell out, so book about 4 weeks ahead.",order:"Book the slot 30 min before sunset.",tags:"view rooftop popular book ahead"},
+{id:"t-nakameguro",city:"Tokyo",cat:"See",name:"Nakameguro canal",ja:"目黒川",area:"Meguro",price:"¥¥",desc:"Canal lined with cafes and boutiques; the most famous sakura tunnel in Tokyo if blooms line up (late March).",order:"Coffee to go and a slow walk.",tags:"cafes sakura walk boutiques"},
+{id:"t-kamakura",city:"Tokyo",cat:"Day trip",name:"Kamakura and Enoshima",ja:"鎌倉",area:"1 hr from Tokyo",price:"¥¥",desc:"Giant Buddha, temple streets, and a beach-town vibe. Ride the little Enoden train along the coast.",order:"Shirasu (whitebait) rice bowl in Enoshima.",tags:"day trip beach temples train"},
+{id:"t-hakone",city:"Tokyo",cat:"Day trip",name:"Hakone overnight",ja:"箱根",area:"1.5 hr from Tokyo",price:"¥¥¥",desc:"Hot springs, ropeway, a pirate-ship lake cruise and Mt Fuji views on clear days. Best as one night in a ryokan.",order:"Hakone Free Pass covers most transport.",tags:"onsen ryokan fuji day trip"},
 // ---------------- KYOTO ----------------
-{id:"k-inari",city:"Kyoto",cat:"See",name:"Fushimi Inari Taisha",area:"Fushimi",price:"¥",desc:"Thousands of orange torii gates. Go by 7:30 am or after 5 pm; crowds thin past the first 20 minutes uphill.",order:"Kitsune udon or inari sushi at the shops at the base.",tags:"shrine torii gates photos early"},
-{id:"k-nishiki",city:"Kyoto",cat:"Eat",name:"Nishiki Market",area:"Downtown",price:"¥¥",desc:"Narrow covered food market. Eat at the stall, since walking while eating is discouraged here.",order:"Tamagoyaki, soy-milk donuts, pickles, sesame everything.",tags:"market street food snacks"},
-{id:"k-aritsugu",city:"Kyoto",cat:"Knife",name:"Aritsugu",area:"Nishiki Market",price:"¥¥¥",desc:"Knife maker founded in 1560, right in Nishiki Market. They engrave your name in Japanese for free while you wait.",order:"Stainless or carbon gyuto; ask for name engraving.",tags:"knife engraving historic gift"},
-{id:"k-omen",city:"Kyoto",cat:"Eat",name:"Omen (Ginkakuji)",area:"Higashiyama",price:"¥¥",desc:"Thick udon you dip in hot broth with seasonal vegetables and sesame. Near the Philosopher's Path.",order:"The namesake Omen set.",tags:"udon noodles lunch"},
-{id:"k-daiichi",city:"Kyoto",cat:"Eat",name:"Honke Daiichi-asahi",area:"Kyoto Station",price:"¥",desc:"Classic Kyoto soy-pork ramen, open early. Good arrival or departure meal.",order:"Tokusei ramen with extra green onion.",tags:"ramen early station"},
-{id:"k-gogyo",city:"Kyoto",cat:"Eat",name:"Kyoto Gogyo",area:"Downtown",price:"¥¥",desc:"Burnt (kogashi) miso ramen in an old townhouse. Rich, smoky, unusual.",order:"Kogashi miso ramen.",tags:"ramen unique dinner"},
-{id:"k-pontocho",city:"Kyoto",cat:"Eat",name:"Pontocho alley",area:"Downtown",price:"¥¥¥",desc:"Lantern-lit lane by the river. Prices vary a lot; yakitori and kushiage spots are friendlier on the wallet.",order:"Look for posted menus with prices outside.",tags:"dinner alley night atmosphere"},
+{id:"k-inari",city:"Kyoto",cat:"See",name:"Fushimi Inari Taisha",ja:"伏見稲荷大社",area:"Fushimi",price:"¥",desc:"Thousands of orange torii gates. Go by 7:30 am or after 5 pm; crowds thin past the first 20 minutes uphill.",order:"Kitsune udon or inari sushi at the shops at the base.",tags:"shrine torii gates photos early"},
+{id:"k-nishiki",city:"Kyoto",cat:"Eat",name:"Nishiki Market",ja:"錦市場",area:"Downtown",price:"¥¥",desc:"Narrow covered food market. Eat at the stall, since walking while eating is discouraged here.",order:"Tamagoyaki, soy-milk donuts, pickles, sesame everything.",tags:"market street food snacks"},
+{id:"k-aritsugu",city:"Kyoto",cat:"Knife",name:"Aritsugu",ja:"有次",area:"Nishiki Market",price:"¥¥¥",desc:"Knife maker founded in 1560, right in Nishiki Market. They engrave your name in Japanese for free while you wait.",order:"Stainless or carbon gyuto; ask for name engraving.",tags:"knife engraving historic gift"},
+{id:"k-omen",city:"Kyoto",cat:"Eat",name:"Omen (Ginkakuji)",ja:"おめん 銀閣寺本店",area:"Higashiyama",price:"¥¥",desc:"Thick udon you dip in hot broth with seasonal vegetables and sesame. Near the Philosopher's Path.",order:"The namesake Omen set.",tags:"udon noodles lunch"},
+{id:"k-daiichi",city:"Kyoto",cat:"Eat",name:"Honke Daiichi-asahi",ja:"本家 第一旭 たかばし本店",area:"Kyoto Station",price:"¥",desc:"Classic Kyoto soy-pork ramen, open early. Good arrival or departure meal.",order:"Tokusei ramen with extra green onion.",tags:"ramen early station"},
+{id:"k-gogyo",city:"Kyoto",cat:"Eat",name:"Kyoto Gogyo",ja:"京都 五行",area:"Downtown",price:"¥¥",desc:"Burnt (kogashi) miso ramen in an old townhouse. Rich, smoky, unusual.",order:"Kogashi miso ramen.",tags:"ramen unique dinner"},
+{id:"k-pontocho",city:"Kyoto",cat:"Eat",name:"Pontocho alley",ja:"先斗町",area:"Downtown",price:"¥¥¥",desc:"Lantern-lit lane by the river. Prices vary a lot; yakitori and kushiage spots are friendlier on the wallet.",order:"Look for posted menus with prices outside.",tags:"dinner alley night atmosphere"},
 {id:"k-beesknees",city:"Kyoto",cat:"Drink",name:"Bee's Knees",area:"Kiyamachi",price:"¥¥¥",desc:"Speakeasy hidden behind a plain blue door. Creative cocktails, small room.",order:"Seasonal cocktail list.",tags:"cocktails speakeasy"},
 {id:"k-lescamoteur",city:"Kyoto",cat:"Drink",name:"L'Escamoteur",area:"Kiyamachi",price:"¥¥",desc:"Magic-and-curiosities themed cocktail bar with theatrical drinks.",order:"Ask what's on fire tonight.",tags:"cocktails themed fun"},
-{id:"k-fushimisake",city:"Kyoto",cat:"Drink",name:"Fushimi sake district",area:"Fushimi",price:"¥¥",desc:"Old sake breweries by willow-lined canals. Tasting flights, and it pairs well with Fushimi Inari.",order:"Gekkeikan museum tasting; sake flight at a local brewpub.",tags:"sake tasting brewery"},
-{id:"k-ippodo",city:"Kyoto",cat:"Shop",name:"Ippodo Tea",area:"Teramachi",price:"¥¥",desc:"Tea merchant since 1717. Try tea in the tearoom, then buy matcha or sencha to take home.",order:"Tearoom matcha with a sweet.",tags:"tea matcha gift shop"},
-{id:"k-kyukyodo",city:"Kyoto",cat:"Shop",name:"Kyukyodo",area:"Teramachi",price:"¥¥",desc:"Incense, washi paper, cards and calligraphy goods since the 1600s. Beautiful small gifts.",order:"Incense sampler and seasonal postcards.",tags:"incense paper stationery gifts"},
-{id:"k-ichizawa",city:"Kyoto",cat:"Shop",name:"Ichizawa Shinzaburo Hanpu",area:"Higashiyama",price:"¥¥¥",desc:"Handmade canvas bags sold only at their own Kyoto shop. Sturdy, simple, last for years.",order:"A tote in a color you can't get at home.",tags:"bags handmade crafts"},
-{id:"k-kaikado",city:"Kyoto",cat:"Shop",name:"Kaikado tea caddies and cafe",area:"Near Kamogawa",price:"¥¥¥",desc:"Hand-made metal tea canisters (since 1875) that develop a patina. Their cafe is a calm break.",order:"Small copper caddy as a lifetime souvenir.",tags:"crafts tea gift cafe"},
-{id:"k-teramachi",city:"Kyoto",cat:"Shop",name:"Teramachi and Shinkyogoku arcades",area:"Downtown",price:"¥¥",desc:"Covered shopping streets mixing old craft shops, clothing, and quirky souvenir spots. Good rainy-day option.",order:"Wander between Nishiki and Sanjo.",tags:"shopping arcade rainy day"},
-{id:"k-toji",city:"Kyoto",cat:"Shop",name:"To-ji flea market (21st of each month)",area:"South Kyoto",price:"¥",desc:"Huge monthly temple market: old kimono, ceramics, antiques, food stalls. Only on the 21st.",order:"Vintage kimono or haori for a few thousand yen.",tags:"flea market vintage kimono antiques"},
-{id:"k-kitano",city:"Kyoto",cat:"See",name:"Kitano Tenmangu plum garden",area:"North Kyoto",price:"¥",desc:"Plum blossoms peak about late Feb to mid-March, before the cherries. Flea market here on the 25th.",order:"Plum tea and sweets in the garden.",tags:"plum blossoms shrine early march market"},
+{id:"k-fushimisake",city:"Kyoto",cat:"Drink",name:"Fushimi sake district",ja:"伏見 酒蔵",area:"Fushimi",price:"¥¥",desc:"Old sake breweries by willow-lined canals. Tasting flights, and it pairs well with Fushimi Inari.",order:"Gekkeikan museum tasting; sake flight at a local brewpub.",tags:"sake tasting brewery"},
+{id:"k-ippodo",city:"Kyoto",cat:"Shop",name:"Ippodo Tea",ja:"一保堂茶舗",area:"Teramachi",price:"¥¥",desc:"Tea merchant since 1717. Try tea in the tearoom, then buy matcha or sencha to take home.",order:"Tearoom matcha with a sweet.",tags:"tea matcha gift shop"},
+{id:"k-kyukyodo",city:"Kyoto",cat:"Shop",name:"Kyukyodo",ja:"鳩居堂",area:"Teramachi",price:"¥¥",desc:"Incense, washi paper, cards and calligraphy goods since the 1600s. Beautiful small gifts.",order:"Incense sampler and seasonal postcards.",tags:"incense paper stationery gifts"},
+{id:"k-ichizawa",city:"Kyoto",cat:"Shop",name:"Ichizawa Shinzaburo Hanpu",ja:"一澤信三郎帆布",area:"Higashiyama",price:"¥¥¥",desc:"Handmade canvas bags sold only at their own Kyoto shop. Sturdy, simple, last for years.",order:"A tote in a color you can't get at home.",tags:"bags handmade crafts"},
+{id:"k-kaikado",city:"Kyoto",cat:"Shop",name:"Kaikado tea caddies and cafe",ja:"開化堂",area:"Near Kamogawa",price:"¥¥¥",desc:"Hand-made metal tea canisters (since 1875) that develop a patina. Their cafe is a calm break.",order:"Small copper caddy as a lifetime souvenir.",tags:"crafts tea gift cafe"},
+{id:"k-teramachi",city:"Kyoto",cat:"Shop",name:"Teramachi and Shinkyogoku arcades",ja:"寺町京極商店街",area:"Downtown",price:"¥¥",desc:"Covered shopping streets mixing old craft shops, clothing, and quirky souvenir spots. Good rainy-day option.",order:"Wander between Nishiki and Sanjo.",tags:"shopping arcade rainy day"},
+{id:"k-toji",city:"Kyoto",cat:"Shop",name:"To-ji flea market (21st of each month)",ja:"東寺",area:"South Kyoto",price:"¥",desc:"Huge monthly temple market: old kimono, ceramics, antiques, food stalls. Only on the 21st.",order:"Vintage kimono or haori for a few thousand yen.",tags:"flea market vintage kimono antiques"},
+{id:"k-kitano",city:"Kyoto",cat:"See",name:"Kitano Tenmangu plum garden",ja:"北野天満宮",area:"North Kyoto",price:"¥",desc:"Plum blossoms peak about late Feb to mid-March, before the cherries. Flea market here on the 25th.",order:"Plum tea and sweets in the garden.",tags:"plum blossoms shrine early march market"},
 {id:"k-kimono",city:"Kyoto",cat:"Do",name:"Kimono rental",area:"Gion / Higashiyama",price:"¥¥",desc:"Rent kimono for the day as a group and walk Gion and Ninenzaka. Book online; hair styling is extra.",order:"Book a morning slot so you get the full day.",tags:"kimono photos group culture"},
 {id:"k-tea",city:"Kyoto",cat:"Do",name:"Tea ceremony class",area:"Gion",price:"¥¥",desc:"Small-group tea ceremony where you whisk your own matcha. About 45–60 minutes.",order:"Book a group of 4 together.",tags:"tea ceremony culture class"},
-{id:"k-gion",city:"Kyoto",cat:"See",name:"Gion at dusk",area:"Gion",price:"¥",desc:"Walk Hanamikoji and Shirakawa as the lanterns come on. Don't photograph geiko up close; private lanes are off limits.",order:"Then dinner in Pontocho.",tags:"geisha district evening walk"},
-{id:"k-otagi",city:"Kyoto",cat:"See",name:"Otagi Nenbutsu-ji",area:"Far Arashiyama",price:"¥",desc:"1,200 mossy stone statues, each with a different funny face. Hardly anyone goes. Take a taxi from Arashiyama.",order:"Find one that looks like each of you.",tags:"temple quirky hidden gem"},
-{id:"k-monkeys",city:"Kyoto",cat:"See",name:"Arashiyama Monkey Park",area:"Arashiyama",price:"¥",desc:"20-minute uphill walk to wild snow monkeys and a city view; you feed them from inside a hut.",order:"Combine with the bamboo grove at 8 am.",tags:"monkeys wildlife view"},
-{id:"k-philosopher",city:"Kyoto",cat:"See",name:"Philosopher's Path",area:"Higashiyama",price:"¥",desc:"Flat canal-side walk past small shops and cafes. A sakura tunnel if blooms line up.",order:"Start at Ginkakuji, end near Nanzen-ji.",tags:"walk sakura canal cafes"},
-{id:"k-nara",city:"Kyoto",cat:"Day trip",name:"Nara deer park",area:"45 min from Kyoto or Osaka",price:"¥",desc:"Bowing deer roam the park around the giant Buddha at Todai-ji. Flat, easy, and very fun.",order:"Shika senbei (deer crackers); hide them until you're ready.",tags:"deer day trip easy temple"},
-{id:"k-uji",city:"Kyoto",cat:"Day trip",name:"Uji matcha town",area:"25 min from Kyoto",price:"¥¥",desc:"Japan's matcha capital: the Byodo-in temple (on the ¥10 coin) and matcha everything.",order:"Matcha parfait at Nakamura Tokichi.",tags:"matcha tea day trip sweets"},
+{id:"k-gion",city:"Kyoto",cat:"See",name:"Gion at dusk",ja:"花見小路",area:"Gion",price:"¥",desc:"Walk Hanamikoji and Shirakawa as the lanterns come on. Don't photograph geiko up close; private lanes are off limits.",order:"Then dinner in Pontocho.",tags:"geisha district evening walk"},
+{id:"k-otagi",city:"Kyoto",cat:"See",name:"Otagi Nenbutsu-ji",ja:"愛宕念仏寺",area:"Far Arashiyama",price:"¥",desc:"1,200 mossy stone statues, each with a different funny face. Hardly anyone goes. Take a taxi from Arashiyama.",order:"Find one that looks like each of you.",tags:"temple quirky hidden gem"},
+{id:"k-monkeys",city:"Kyoto",cat:"See",name:"Arashiyama Monkey Park",ja:"嵐山モンキーパークいわたやま",area:"Arashiyama",price:"¥",desc:"20-minute uphill walk to wild snow monkeys and a city view; you feed them from inside a hut.",order:"Combine with the bamboo grove at 8 am.",tags:"monkeys wildlife view"},
+{id:"k-philosopher",city:"Kyoto",cat:"See",name:"Philosopher's Path",ja:"哲学の道",area:"Higashiyama",price:"¥",desc:"Flat canal-side walk past small shops and cafes. A sakura tunnel if blooms line up.",order:"Start at Ginkakuji, end near Nanzen-ji.",tags:"walk sakura canal cafes"},
+{id:"k-nara",city:"Kyoto",cat:"Day trip",name:"Nara deer park",ja:"奈良公園",area:"45 min from Kyoto or Osaka",price:"¥",desc:"Bowing deer roam the park around the giant Buddha at Todai-ji. Flat, easy, and very fun.",order:"Shika senbei (deer crackers); hide them until you're ready.",tags:"deer day trip easy temple"},
+{id:"k-uji",city:"Kyoto",cat:"Day trip",name:"Uji matcha town",ja:"宇治",area:"25 min from Kyoto",price:"¥¥",desc:"Japan's matcha capital: the Byodo-in temple (on the ¥10 coin) and matcha everything.",order:"Matcha parfait at Nakamura Tokichi.",tags:"matcha tea day trip sweets"},
 // ---------------- OSAKA ----------------
-{id:"o-sumo",city:"Osaka",cat:"Do",name:"March Grand Sumo Tournament",area:"Edion Arena Osaka",price:"¥¥¥",desc:"Osaka hosts the 2027 March tournament Mar 14–28 at EDION Arena, a short walk from Namba. Tickets go on sale Feb 6, 2027 on the official Ticket Oosumo site; weekends sell out first.",order:"Chair seats upstairs are cheapest; arrive mid-afternoon for the top divisions.",tags:"sumo unique event march tickets"},
-{id:"o-doguya",city:"Osaka",cat:"Knife",name:"Sennichimae Doguyasuji",area:"Namba",price:"¥¥¥",desc:"Osaka's covered kitchen-tools arcade: knives, takoyaki pans, ceramics, fake food. Steps from Dotonbori.",order:"Buy a takoyaki pan as a fun gift too.",tags:"knife kitchen arcade cookware"},
-{id:"o-tower",city:"Osaka",cat:"Knife",name:"Tower Knives Osaka",area:"Doguyasuji",price:"¥¥¥",desc:"English-friendly knife shop with knives from Sakai and beyond, sharpening demos, and patient staff. Good for a first Japanese knife.",order:"Ask about Sakai-made stainless gyuto.",tags:"knife english friendly sakai"},
-{id:"o-sakai",city:"Osaka",cat:"Knife",name:"Sakai knife town",area:"20 min south of Osaka",price:"¥¥¥",desc:"Japan's historic knife capital, where most pro chef knives are made. The free Sakai Traditional Crafts Museum (Denshokan) has a big knife shop, a knife museum, and sharpening classes. Closed the 3rd Tuesday of each month.",order:"Half-day trip if she wants to buy straight from the source.",tags:"knife day trip crafts sakai"},
-{id:"o-harukoma",city:"Osaka",cat:"Eat",name:"Harukoma",area:"Tenma",price:"¥¥",desc:"Local-favorite sushi with big cuts at low prices on Japan's longest shopping street. Expect a line.",order:"Toro, anago, and whatever is on the daily board.",tags:"sushi local favorite cheap"},
-{id:"o-mizuno",city:"Osaka",cat:"Eat",name:"Mizuno",area:"Dotonbori",price:"¥¥",desc:"Okonomiyaki since 1945, cooked in front of you. Worth the queue over the flashy neighbors.",order:"Yamaimo-yaki (yam batter, very fluffy).",tags:"okonomiyaki dotonbori"},
-{id:"o-kiji",city:"Osaka",cat:"Eat",name:"Kiji",area:"Umeda Sky Building basement",price:"¥¥",desc:"Tiny okonomiyaki counter in a retro Showa-style food alley. Do it before the sunset view upstairs.",order:"Modan-yaki (with noodles).",tags:"okonomiyaki retro"},
+{id:"o-sumo",city:"Osaka",cat:"Do",name:"March Grand Sumo Tournament",ja:"エディオンアリーナ大阪",area:"Edion Arena Osaka",price:"¥¥¥",desc:"Osaka hosts the 2027 March tournament Mar 14–28 at EDION Arena, a short walk from Namba. Tickets go on sale Feb 6, 2027 on the official Ticket Oosumo site; weekends sell out first.",order:"Chair seats upstairs are cheapest; arrive mid-afternoon for the top divisions.",tags:"sumo unique event march tickets"},
+{id:"o-doguya",city:"Osaka",cat:"Knife",name:"Sennichimae Doguyasuji",ja:"千日前道具屋筋商店街",area:"Namba",price:"¥¥¥",desc:"Osaka's covered kitchen-tools arcade: knives, takoyaki pans, ceramics, fake food. Steps from Dotonbori.",order:"Buy a takoyaki pan as a fun gift too.",tags:"knife kitchen arcade cookware"},
+{id:"o-tower",city:"Osaka",cat:"Knife",name:"Tower Knives Osaka",ja:"タワーナイブズ大阪",area:"Doguyasuji",price:"¥¥¥",desc:"English-friendly knife shop with knives from Sakai and beyond, sharpening demos, and patient staff. Good for a first Japanese knife.",order:"Ask about Sakai-made stainless gyuto.",tags:"knife english friendly sakai"},
+{id:"o-sakai",city:"Osaka",cat:"Knife",name:"Sakai knife town",ja:"堺伝統産業会館",area:"20 min south of Osaka",price:"¥¥¥",desc:"Japan's historic knife capital, where most pro chef knives are made. The free Sakai Traditional Crafts Museum (Denshokan) has a big knife shop, a knife museum, and sharpening classes. Closed the 3rd Tuesday of each month.",order:"Half-day trip if she wants to buy straight from the source.",tags:"knife day trip crafts sakai"},
+{id:"o-harukoma",city:"Osaka",cat:"Eat",name:"Harukoma",ja:"春駒",area:"Tenma",price:"¥¥",desc:"Local-favorite sushi with big cuts at low prices on Japan's longest shopping street. Expect a line.",order:"Toro, anago, and whatever is on the daily board.",tags:"sushi local favorite cheap"},
+{id:"o-mizuno",city:"Osaka",cat:"Eat",name:"Mizuno",ja:"美津の",area:"Dotonbori",price:"¥¥",desc:"Okonomiyaki since 1945, cooked in front of you. Worth the queue over the flashy neighbors.",order:"Yamaimo-yaki (yam batter, very fluffy).",tags:"okonomiyaki dotonbori"},
+{id:"o-kiji",city:"Osaka",cat:"Eat",name:"Kiji",ja:"きじ 梅田スカイビル",area:"Umeda Sky Building basement",price:"¥¥",desc:"Tiny okonomiyaki counter in a retro Showa-style food alley. Do it before the sunset view upstairs.",order:"Modan-yaki (with noodles).",tags:"okonomiyaki retro"},
 {id:"o-takoyaki",city:"Osaka",cat:"Eat",name:"Takoyaki crawl",area:"Namba / Amerikamura",price:"¥",desc:"Try three stands and vote. Wanaka and Kogaryu are reliable favorites.",order:"Classic sauce and mayo, then a dashi-dipped version.",tags:"takoyaki street food cheap"},
-{id:"o-jinrui",city:"Osaka",cat:"Eat",name:"Jinrui Mina Menrui",area:"Nishinakajima",price:"¥",desc:"Famous shoyu ramen with thick slabs of chashu. One of Osaka's top-rated bowls.",order:"Genten ramen.",tags:"ramen famous"},
-{id:"o-kushikatsu",city:"Osaka",cat:"Eat",name:"Shinsekai kushikatsu",area:"Shinsekai",price:"¥",desc:"Retro neon district famous for deep-fried skewers. One rule: no double-dipping in the shared sauce.",order:"Beef, lotus root, quail egg, cheese.",tags:"kushikatsu retro cheap"},
-{id:"o-yakiniku",city:"Osaka",cat:"Eat",name:"Matsusakagyu Yakiniku M",area:"Hozenji",price:"¥¥¥",desc:"Splurge-night grilled wagyu you cook at the table. Lunch sets cost less.",order:"Assorted Matsusaka beef set.",tags:"wagyu yakiniku splurge"},
-{id:"o-tenjinbashi",city:"Osaka",cat:"Shop",name:"Tenjinbashisuji Shotengai",area:"Tenma",price:"¥",desc:"Japan's longest covered shopping street (2.6 km): snacks, old shops, cheap eats, no tourist polish.",order:"Croquettes and cheap sushi along the way.",tags:"shopping street local cheap"},
-{id:"o-amemura",city:"Osaka",cat:"Shop",name:"Amerikamura",area:"Shinsaibashi",price:"¥¥",desc:"Osaka's youth fashion and thrift neighborhood, plus street art and takoyaki.",order:"Vintage stores on the side streets.",tags:"vintage fashion thrift"},
-{id:"o-nakazaki",city:"Osaka",cat:"Shop",name:"Nakazakicho",area:"Umeda",price:"¥¥",desc:"Old wooden houses turned into tiny cafes, vintage shops and galleries. Calm, artsy, very Instagrammable.",order:"Cafe-hop and look for handmade goods.",tags:"cafes vintage crafts hidden"},
-{id:"o-denden",city:"Osaka",cat:"Shop",name:"Den Den Town",area:"Nipponbashi",price:"¥¥",desc:"Osaka's anime, game and retro-toy district. More relaxed than Akihabara.",order:"Retro game shops and figure stores.",tags:"anime games retro"},
-{id:"o-hankyu",city:"Osaka",cat:"Shop",name:"Hankyu Umeda depachika",area:"Umeda",price:"¥¥",desc:"One of Japan's best food basements for sweets and beautifully boxed gifts.",order:"Seasonal sweets as gifts for home.",tags:"food hall sweets gifts"},
-{id:"o-uranamba",city:"Osaka",cat:"Drink",name:"Ura-Namba",area:"Namba",price:"¥¥",desc:"Backstreets behind Namba packed with small izakaya and standing bars. Where locals go instead of Dotonbori.",order:"Bar-hop: one drink and one dish per place.",tags:"izakaya nightlife local"},
-{id:"o-uratenma",city:"Osaka",cat:"Drink",name:"Ura-Tenma",area:"Tenma",price:"¥¥",desc:"Dense web of cheap izakaya under and around the train tracks. Loud, friendly, great value.",order:"Highballs and skewers.",tags:"izakaya cheap nightlife"},
-{id:"o-hozenji",city:"Osaka",cat:"See",name:"Hozenji Yokocho",area:"Namba",price:"¥",desc:"Quiet stone-paved lane with a moss-covered statue people splash with water for luck. Lovely at night.",order:"Splash the statue, then dinner nearby.",tags:"alley shrine night quiet"},
-{id:"o-umedasky",city:"Osaka",cat:"See",name:"Umeda Sky Building",area:"Umeda",price:"¥¥",desc:"Open-air 'floating garden' observatory. Go at sunset.",order:"Kiji okonomiyaki in the basement first.",tags:"view sunset"},
-{id:"o-castle",city:"Osaka",cat:"See",name:"Osaka Castle park",area:"Chuo",price:"¥",desc:"Plum grove in early March, cherry blossoms late March. The park beats the museum inside.",order:"Picnic from a konbini.",tags:"castle park plum sakura"},
-{id:"o-usj",city:"Osaka",cat:"Do",name:"Universal Studios Japan (Super Nintendo World)",area:"Bay area",price:"¥¥¥",desc:"Big ticket, but a blast with friends. Nintendo World needs a timed-entry ticket or Express Pass.",order:"Buy Express Pass ahead for weekend visits.",tags:"theme park nintendo popular"},
-{id:"o-kobe",city:"Osaka",cat:"Day trip",name:"Kobe",area:"30 min from Osaka",price:"¥¥¥",desc:"Kobe beef lunch sets cost far less than dinner. Add the harbor and Nada sake breweries.",order:"Kobe beef teppanyaki lunch set.",tags:"kobe beef day trip sake"},
-{id:"o-himeji",city:"Osaka",cat:"Day trip",name:"Himeji Castle",area:"1 hr from Osaka",price:"¥¥",desc:"Japan's most beautiful original castle. Half day, easy by shinkansen.",order:"Add Kokoen garden next door.",tags:"castle day trip"}
+{id:"o-jinrui",city:"Osaka",cat:"Eat",name:"Jinrui Mina Menrui",ja:"人類みな麺類",area:"Nishinakajima",price:"¥",desc:"Famous shoyu ramen with thick slabs of chashu. One of Osaka's top-rated bowls.",order:"Genten ramen.",tags:"ramen famous"},
+{id:"o-kushikatsu",city:"Osaka",cat:"Eat",name:"Shinsekai kushikatsu",ja:"新世界",area:"Shinsekai",price:"¥",desc:"Retro neon district famous for deep-fried skewers. One rule: no double-dipping in the shared sauce.",order:"Beef, lotus root, quail egg, cheese.",tags:"kushikatsu retro cheap"},
+{id:"o-yakiniku",city:"Osaka",cat:"Eat",name:"Matsusakagyu Yakiniku M",ja:"松阪牛焼肉M 法善寺横丁店",area:"Hozenji",price:"¥¥¥",desc:"Splurge-night grilled wagyu you cook at the table. Lunch sets cost less.",order:"Assorted Matsusaka beef set.",tags:"wagyu yakiniku splurge"},
+{id:"o-tenjinbashi",city:"Osaka",cat:"Shop",name:"Tenjinbashisuji Shotengai",ja:"天神橋筋商店街",area:"Tenma",price:"¥",desc:"Japan's longest covered shopping street (2.6 km): snacks, old shops, cheap eats, no tourist polish.",order:"Croquettes and cheap sushi along the way.",tags:"shopping street local cheap"},
+{id:"o-amemura",city:"Osaka",cat:"Shop",name:"Amerikamura",ja:"アメリカ村",area:"Shinsaibashi",price:"¥¥",desc:"Osaka's youth fashion and thrift neighborhood, plus street art and takoyaki.",order:"Vintage stores on the side streets.",tags:"vintage fashion thrift"},
+{id:"o-nakazaki",city:"Osaka",cat:"Shop",name:"Nakazakicho",ja:"中崎町",area:"Umeda",price:"¥¥",desc:"Old wooden houses turned into tiny cafes, vintage shops and galleries. Calm, artsy, very Instagrammable.",order:"Cafe-hop and look for handmade goods.",tags:"cafes vintage crafts hidden"},
+{id:"o-denden",city:"Osaka",cat:"Shop",name:"Den Den Town",ja:"でんでんタウン",area:"Nipponbashi",price:"¥¥",desc:"Osaka's anime, game and retro-toy district. More relaxed than Akihabara.",order:"Retro game shops and figure stores.",tags:"anime games retro"},
+{id:"o-hankyu",city:"Osaka",cat:"Shop",name:"Hankyu Umeda depachika",ja:"阪急うめだ本店",area:"Umeda",price:"¥¥",desc:"One of Japan's best food basements for sweets and beautifully boxed gifts.",order:"Seasonal sweets as gifts for home.",tags:"food hall sweets gifts"},
+{id:"o-uranamba",city:"Osaka",cat:"Drink",name:"Ura-Namba",ja:"裏なんば",area:"Namba",price:"¥¥",desc:"Backstreets behind Namba packed with small izakaya and standing bars. Where locals go instead of Dotonbori.",order:"Bar-hop: one drink and one dish per place.",tags:"izakaya nightlife local"},
+{id:"o-uratenma",city:"Osaka",cat:"Drink",name:"Ura-Tenma",ja:"裏天満",area:"Tenma",price:"¥¥",desc:"Dense web of cheap izakaya under and around the train tracks. Loud, friendly, great value.",order:"Highballs and skewers.",tags:"izakaya cheap nightlife"},
+{id:"o-hozenji",city:"Osaka",cat:"See",name:"Hozenji Yokocho",ja:"法善寺横丁",area:"Namba",price:"¥",desc:"Quiet stone-paved lane with a moss-covered statue people splash with water for luck. Lovely at night.",order:"Splash the statue, then dinner nearby.",tags:"alley shrine night quiet"},
+{id:"o-umedasky",city:"Osaka",cat:"See",name:"Umeda Sky Building",ja:"梅田スカイビル",area:"Umeda",price:"¥¥",desc:"Open-air 'floating garden' observatory. Go at sunset.",order:"Kiji okonomiyaki in the basement first.",tags:"view sunset"},
+{id:"o-castle",city:"Osaka",cat:"See",name:"Osaka Castle park",ja:"大阪城公園",area:"Chuo",price:"¥",desc:"Plum grove in early March, cherry blossoms late March. The park beats the museum inside.",order:"Picnic from a konbini.",tags:"castle park plum sakura"},
+{id:"o-usj",city:"Osaka",cat:"Do",name:"Universal Studios Japan (Super Nintendo World)",ja:"ユニバーサル・スタジオ・ジャパン",area:"Bay area",price:"¥¥¥",desc:"Big ticket, but a blast with friends. Nintendo World needs a timed-entry ticket or Express Pass.",order:"Buy Express Pass ahead for weekend visits.",tags:"theme park nintendo popular"},
+{id:"o-kobe",city:"Osaka",cat:"Day trip",name:"Kobe",ja:"神戸",area:"30 min from Osaka",price:"¥¥¥",desc:"Kobe beef lunch sets cost far less than dinner. Add the harbor and Nada sake breweries.",order:"Kobe beef teppanyaki lunch set.",tags:"kobe beef day trip sake"},
+{id:"o-himeji",city:"Osaka",cat:"Day trip",name:"Himeji Castle",ja:"姫路城",area:"1 hr from Osaka",price:"¥¥",desc:"Japan's most beautiful original castle. Half day, easy by shinkansen.",order:"Add Kokoen garden next door.",tags:"castle day trip"}
 ];
 
 window.KNIFE_TIPS = [
@@ -393,7 +398,21 @@ function blank(){ return {saved:{}, custom:[], bookings:[], checklist:DEFAULT_CH
 function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY)); if(s && typeof s === "object") return Object.assign(blank(), s); }catch(e){} return blank(); }
 let S = load();
 setTimeout(()=>{ try{ dedupeChecklist(); }catch(_){} },0);
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast("This browser isn't saving. Download a backup."); } }
+function save(touch){ if(touch!==false) S.changed=now(); try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){ toast("This browser isn't saving. Download a backup."); } askPersist(); }
+// Ask the browser not to clear saved data when space runs low (works on most phones; harmless if not)
+function askPersist(){ if(askPersist.done) return; askPersist.done=1; try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(_){} }
+const WEEK = 7*24*3600*1000;
+function needsBackup(){
+  const n = Object.keys(S.saved).filter(isSaved).length + live(S.bookings).length;
+  if(!n) return false;
+  if(!S.lastBackup) return n>=3;
+  return (S.changed||0) > S.lastBackup && now()-S.lastBackup > WEEK;
+}
+function markBackedUp(){ S.lastBackup=now(); save(false); renderBackupNag(); }
+function renderBackupNag(){
+  const el=$("#backupNag"); if(!el) return;
+  el.innerHTML = needsBackup() ? `<div class="box warn"><b>Back up your trip.</b> Your saves live only in this browser, and phones sometimes clear website data. ${S.lastBackup?"Your last backup was "+Math.round((now()-S.lastBackup)/86400000)+" days ago.":"You haven't made a backup yet."} Tap Download backup and save the file to Google Drive or iCloud.<div class="note" style="margin-top:4px">On iPhone, adding this site to your Home Screen (Share → Add to Home Screen) also keeps your saves safer.</div><div class="acts row" style="margin-top:8px"><button class="btn small" data-act="exportFile">⬇️ Download backup</button></div></div>` : "";
+}
 function toast(m){ const t=$("#toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast.h); toast.h=setTimeout(()=>t.classList.remove("show"),2200); }
 
 const live = arr => (arr||[]).filter(x=>!x.del);
@@ -401,7 +420,12 @@ function dedupeChecklist(){ const seen=new Set(); S.checklist=(S.checklist||[]).
 const allItems = () => G.concat(live(S.custom));
 const byId = id => allItems().find(x=>x.id===id);
 const isSaved = id => S.saved[id] && !S.saved[id].del;
-const mapUrl = it => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent([it.name, it.area, it.city==="Anywhere"?"Japan":it.city+" Japan"].filter(Boolean).join(" "));
+const cityName = it => it.city==="Anywhere" ? "Japan" : it.city;
+const mapUrl = it => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent((it.addr ? [it.name, it.addr] : [it.name, it.area, cityName(it)+(it.city==="Anywhere"?"":" Japan")]).filter(Boolean).join(" "));
+// a day number only counts if it is inside the trip; places on days past the end show as "not scheduled"
+const dayOf = s => { const d = parseInt(s && s.day, 10); return d>=1 && d<=S.days ? d : 0; };
+const ordOf = x => (x.s.ord==null ? 1e9 : x.s.ord);
+const baseOf = d => (S.base && S.base[d] && S.base[d].city) || "";
 
 // petals
 (function(){ const h=$("#hero"); for(let i=0;i<14;i++){ const p=document.createElement("span"); p.className="petal"; p.style.left=(Math.random()*100)+"%"; p.style.animationDuration=(6+Math.random()*6)+"s"; p.style.animationDelay=(-Math.random()*10)+"s"; h.appendChild(p);} })();
@@ -420,7 +444,8 @@ function cardHTML(it, opts){
   opts = opts || {};
   const saved = isSaved(it.id);
   return `<div class="card">
-   <div class="top"><div><span class="tag ${esc(it.city)}">${esc(it.city)}</span><span class="meta">${CAT_ICON[it.cat]||""} ${esc(it.cat)}${it.area?" · "+esc(it.area):""}${it.price?" · "+esc(it.price):""}</span><h4>${esc(it.name)}</h4></div></div>
+   <div class="top"><div><span class="tag ${esc(it.city)}">${esc(it.city)}</span><span class="meta">${CAT_ICON[it.cat]||""} ${esc(it.cat)}${it.area?" · "+esc(it.area):""}${it.price?" · "+esc(it.price):""}</span><h4>${esc(it.name)}${it.ja?` <span class="meta" lang="ja">${esc(it.ja)}</span>`:""}</h4></div></div>
+   ${it.addr?`<div class="meta">📍 ${esc(it.addr)}</div>`:""}
    ${it.desc?`<div>${esc(it.desc)}</div>`:""}
    ${it.order?`<div class="order"><b>Get:</b> ${esc(it.order)}</div>`:""}
    ${opts.extra||""}
@@ -442,7 +467,7 @@ function renderExplore(){
     if(F.price!=="All" && it.price!==F.price) return false;
     if(F.saved==="1" && !isSaved(it.id)) return false;
     if(!terms.length) return true;
-    const hay = [it.name,it.area,it.city,it.cat,it.desc,it.order,it.tags].join(" ").toLowerCase();
+    const hay = [it.name,it.ja,it.addr,it.area,it.city,it.cat,it.desc,it.order,it.tags].join(" ").toLowerCase();
     return terms.every(t=>hay.includes(t));
   });
   $("#count").textContent = list.length + " of " + allItems().length + " places";
@@ -469,16 +494,17 @@ function renderMyTrip(){
     const order = {Tokyo:1,Kyoto:2,Osaka:3,Anywhere:4};
     items.sort((a,b)=>(order[a.it.city]-order[b.it.city]) || a.it.name.localeCompare(b.it.name));
     $("#savedList").innerHTML = `<div class="grid">` + items.map(({it,s})=>cardHTML(it,{extra:
-      `<select data-act="setDay" data-id="${esc(it.id)}">${dayOptions(s.day)}</select>
+      `<select data-act="setDay" data-id="${esc(it.id)}">${dayOptions(dayOf(s))}</select>
        <textarea data-act="setNote" data-id="${esc(it.id)}" placeholder="Notes: who wants it, what to order, booking time…">${esc(s.note||"")}</textarea>
        ${s.by?`<div class="meta">Added by ${esc(s.by)}</div>`:""}
        ${it.custom?`<button class="btn small ghost" data-act="delCustom" data-id="${esc(it.id)}">Delete my place</button>`:""}`})).join("") + `</div>`;
   }
+  renderBackupNag();
   $("#syncUrl").value = S.settings.syncUrl||""; $("#syncCode").value = S.settings.code||""; $("#travName").value = S.settings.name||"";
 }
 document.addEventListener("change", e=>{
   const t=e.target, id=t.dataset && t.dataset.id;
-  if(t.dataset.act==="setDay" && S.saved[id]){ S.saved[id].day=t.value; S.saved[id].u=now(); save(); toast(t.value?"Added to "+dayLabel(t.value):"Removed from plan"); }
+  if(t.dataset.act==="setDay" && S.saved[id]){ S.saved[id].day=t.value; delete S.saved[id].ord; S.saved[id].u=now(); save(); toast(t.value?"Added to "+dayLabel(t.value):"Removed from plan"); }
   if(t.dataset.act==="setDay" && current()==="plan") renderPlan();
   if(t.dataset.act==="setBase"){ S.base=S.base||{}; S.base[id]={city:t.value,u:now()}; save(); renderPlan(); }
   if(t.id==="yen"||t.id==="rate"){ if(t.id==="rate"){ S.settings.rate=t.value; save(); } convert(); }
@@ -492,7 +518,7 @@ document.addEventListener("change", e=>{
 });
 $("#addForm").addEventListener("submit", e=>{
   e.preventDefault(); const f=new FormData(e.target);
-  const it = {id:"c-"+uid(), custom:true, u:now(), city:f.get("city"), cat:f.get("cat"), name:f.get("name").trim(), area:f.get("area").trim(), link:f.get("link").trim(), desc:f.get("desc").trim(), price:"", tags:"my pick"};
+  const it = {id:"c-"+uid(), custom:true, u:now(), city:f.get("city"), cat:f.get("cat"), name:f.get("name").trim(), area:f.get("area").trim(), addr:(f.get("addr")||"").trim(), link:f.get("link").trim(), desc:f.get("desc").trim(), price:"", tags:"my pick"};
   if(it.link && !/^https?:\/\//i.test(it.link)) it.link="https://"+it.link;
   S.custom.push(it); S.saved[it.id]={day:"",note:"",u:now(),by:S.settings.name||""}; save(); e.target.reset(); renderMyTrip(); toast("Added 💖");
 });
@@ -511,63 +537,106 @@ function alertsFor(dt, base){
   const near={Tokyo:["Kappabashi","🌸"],Kyoto:["Kyoto","Sumo","🌸"],Osaka:["Osaka","Kyoto","Sakai","🌸"]}[base];
   return near ? a.filter(x=>near.some(k=>x.includes(k))) : a;
 }
+// saved places for one day, in the order Lily set (↑ ↓ on the Plan tab)
+function dayItems(items, d){ return items.filter(x=>dayOf(x.s)===d).sort((a,b)=>ordOf(a)-ordOf(b)); }
 function renderPlan(){
   $("#startDate").value = S.start||""; $("#numDays").value = S.days;
   const items = savedItems(); let h="";
+  const past = items.filter(x=>parseInt(x.s.day,10)>S.days);
+  if(past.length) h += `<div class="box warn note">${past.length} saved place${past.length>1?"s were":" was"} on a day after your last day, so ${past.length>1?"they're":"it's"} listed under "not scheduled" below. Make the trip longer to put ${past.length>1?"them":"it"} back, or pick a new day.</div>`;
   for(let d=1; d<=S.days; d++){
-    const day = items.filter(x=>String(x.s.day)===String(d));
-    const base = (S.base&&S.base[d]&&S.base[d].city)||"";
+    const day = dayItems(items, d);
+    const base = baseOf(d);
     const al = alertsFor(dayDate(d), base);
     h += `<div class="day"><b>${esc(dayLabel(d))}</b>
       <select data-act="setBase" data-id="${d}" aria-label="Base city for day ${d}" style="font-size:13px;padding:4px 6px;margin:4px 0">${["","Tokyo","Kyoto","Osaka","Travel day"].map(c=>`<option value="${c}"${c===base?" selected":""}>${c||"Sleeping in…"}</option>`).join("")}</select>
       ${al.length?`<div class="note">${al.map(esc).join(" · ")}</div>`:""}
       ${day.length>4?`<div class="note" style="color:#b3261e">⚠️ ${day.length} stops: probably too many. Move one or two.</div>`:""}
       ${base && day.some(x=>x.it.city!==base && x.it.city!=="Anywhere" && x.it.cat!=="Day trip" && base!=="Travel day")?`<div class="note" style="color:#b3261e">⚠️ Some stops aren't in ${esc(base)}</div>`:""}
-      ${day.length? day.map(x=>`${CAT_ICON[x.it.cat]||""} <a href="${mapUrl(x.it)}" target="_blank" rel="noopener">${esc(x.it.name)}</a> <span class="note">· ${esc(x.it.city)}${x.s.note?" · "+esc(x.s.note):""}</span>`).join("<br>") : `<span class="note">Free day</span>`}</div>`;
+      ${day.length? day.map((x,i)=>`<div class="stop">${day.length>1?`<button class="btn small ghost" data-act="moveUp" data-id="${esc(x.it.id)}" aria-label="Move ${esc(x.it.name)} earlier"${i===0?" disabled":""}>↑</button><button class="btn small ghost" data-act="moveDown" data-id="${esc(x.it.id)}" aria-label="Move ${esc(x.it.name)} later"${i===day.length-1?" disabled":""}>↓</button>`:""}<span>${CAT_ICON[x.it.cat]||""} <a href="${mapUrl(x.it)}" target="_blank" rel="noopener">${esc(x.it.name)}</a> <span class="note">· ${esc(x.it.city)}${x.s.note?" · "+esc(x.s.note):""}</span></span></div>`).join("") : `<span class="note">Free day</span>`}</div>`;
   }
-  const un = items.filter(x=>!x.s.day);
+  const un = items.filter(x=>!dayOf(x.s));
   if(un.length) h += `<h3>Saved but not scheduled (${un.length})</h3><div class="box"><ul class="clean">${un.map(x=>`<li><span style="flex:1">${CAT_ICON[x.it.cat]||""} ${esc(x.it.name)} <span class="note">· ${esc(x.it.city)}</span></span><select data-act="setDay" data-id="${esc(x.it.id)}" style="max-width:48%">${dayOptions("")}</select></li>`).join("")}</ul></div>`;
   $("#planDays").innerHTML = h;
 }
+function moveStop(id, dir){
+  const s = S.saved[id]; if(!s) return;
+  const list = dayItems(savedItems(), dayOf(s)); const i = list.findIndex(x=>x.it.id===id), j = i+dir;
+  if(i<0 || j<0 || j>=list.length) return;
+  [list[i], list[j]] = [list[j], list[i]];
+  list.forEach((x,k)=>{ if(x.s.ord!==k){ x.s.ord=k; x.s.u=now(); } });
+  save(); renderPlan();
+}
 
 // wanderlog
-function placeLine(it){ return `${it.name}${it.area?" ("+it.area+", "+it.city+")":" ("+it.city+")"}`; }
+// One clean line per place: English name (Japanese name) — neighborhood, city — address if she typed one
+function placeLine(it, withLink){
+  return it.name + (it.ja?" ("+it.ja+")":"") + " — " + [it.area, cityName(it)].filter(Boolean).join(", ") + (it.addr?" — "+it.addr:"") + (withLink?" — "+mapUrl(it):"");
+}
+function groupedDays(){
+  const items = savedItems(), out = [];
+  for(let d=1; d<=S.days; d++){ const l = dayItems(items, d); if(l.length) out.push({d, list:l}); }
+  const un = items.filter(x=>!dayOf(x.s)); if(un.length) out.push({d:0, list:un});
+  return out;
+}
 function savedSummary(){
-  const items = savedItems();
-  if(!items.length) return "(No saved places yet)";
-  const byDay = {};
-  items.forEach(x=>{ const k = x.s.day ? dayLabel(x.s.day) : "Not scheduled yet"; (byDay[k]=byDay[k]||[]).push(x); });
-  const keys = Object.keys(byDay).sort((a,b)=>{ const na=parseInt(a.replace(/\D+/,""),10)||999, nb=parseInt(b.replace(/\D+/,""),10)||999; return na-nb; });
-  return keys.map(k=>k+":\n"+byDay[k].map(x=>"- "+placeLine(x.it)+" ["+x.it.cat+"]"+(x.s.note?" — note: "+x.s.note:"")).join("\n")).join("\n\n");
+  const g = groupedDays();
+  if(!g.length) return "(No saved places yet)";
+  return g.map(({d,list})=>(d?dayLabel(d)+(baseOf(d)?" (sleeping in "+baseOf(d)+")":""):"Not scheduled yet")+":\n"+list.map((x,i)=>(d?(i+1)+". ":"- ")+placeLine(x.it)+" ["+x.it.cat+"]"+(x.s.note?" — note: "+x.s.note:"")).join("\n")).join("\n\n");
+}
+function baseSummary(){
+  const l=[]; for(let d=1; d<=S.days; d++){ if(baseOf(d)) l.push("- "+dayLabel(d)+": "+baseOf(d)); }
+  return l.length ? l.join("\n") : "(not set yet; work it out from the places on each day)";
 }
 function bookingSummary(){
   const b = live(S.bookings); if(!b.length) return "(none entered yet)";
   return b.map(x=>`- ${x.type} ${x.title}${x.date?" on "+x.date:""}${x.time?" "+x.time:""}${x.addr?" at "+x.addr:""}`).join("\n");
 }
+const OUT_FORMAT = "Day N | Place name | Japanese name | Neighborhood, City | Note";
+// Short prompt for Wanderlog's AI assistant: add one day's places, in order
+function dayPrompt(d, list){
+  if(!d) return `Save these places to my Wanderlog trip's places list. They don't have a day yet:\n${list.map(x=>"- "+placeLine(x.it)+(x.s.note?" (note: "+x.s.note+")":"")).join("\n")}\n\nThe Japanese name and neighborhood are there so you pick the right place. Use these exact places. If you can't find one, tell me which.`;
+  const base = baseOf(d), bk = live(S.bookings).filter(b=>S.start && b.date && dayDate(d) && b.date===isoDate(dayDate(d)));
+  const lbl = S.start ? dayLabel(d).replace(" · "," (")+")" : dayLabel(d);
+  return `Add these places to ${lbl} of my Wanderlog trip, in this order${base&&base!=="Travel day"?". We're staying in "+base+" that night":base==="Travel day"?". It's a travel day":""}:\n${list.map((x,i)=>(i+1)+". "+placeLine(x.it)+(x.s.note?" (note: "+x.s.note+")":"")).join("\n")}${bk.length?"\n\nBooked that day:\n"+bk.map(b=>"- "+b.type+" "+b.title+(b.time?" at "+b.time:"")).join("\n"):""}\n\nThe Japanese name and neighborhood are there so you pick the right place. Use these exact places and don't swap in others. If you can't find one, tell me which.`;
+}
+function isoDate(dt){ return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
 function prompts(){
   const dates = S.start ? `starting ${S.start} for ${S.days} days` : `for ${S.days} days in March 2027`;
   const who = "four friends in their mid-20s (first trip to Japan, more into food, shopping, culture and nightlife than hiking)";
   return [
-   {t:"Build my Wanderlog itinerary", p:
+   {t:"Check and finish my plan", p:
 `I'm planning a Japan trip (Tokyo, Kyoto, Osaka) ${dates} with ${who}. One of us wants to buy a Japanese kitchen knife.
 
-Here are the places I've already saved, grouped by day:
+Where we're sleeping each night:
+${baseSummary()}
+
+My saved places, grouped by day in the order I want to visit. Each has its Japanese name and neighborhood so you can find the right place:
 ${savedSummary()}
 
-Here are my bookings:
+My bookings:
 ${bookingSummary()}
 
 Please:
-1. Put my unscheduled places on the best days, grouping places that are near each other.
-2. Order each day so we're not zigzagging across the city, and flag anything that needs a reservation or timed ticket.
-3. Point out days that are overpacked (more than 4 main stops) and suggest what to cut.
-4. Keep it as a simple day-by-day list I can add to Wanderlog one place at a time.
-Don't invent opening hours. If you're not sure something is open, say "check hours".`},
+1. Put my unscheduled places on days when we're sleeping in or near that city, grouping places that are near each other.
+2. Reorder each day so we're not zigzagging across the city. Flag anything that needs a reservation or timed ticket.
+3. Point out days with more than 4 main stops and suggest what to cut.
+4. Keep my place names exactly as written and don't add places I didn't list. Don't invent opening hours; if you're not sure, say "check hours".
+
+Reply with one line per place, in visiting order, in exactly this format:
+${OUT_FORMAT}
+Put any warnings in the Note column. If you can add places to my trip directly, add each one to its day in that order.`},
    {t:"Fill the gaps near my saves", p:
-`For my Japan trip with ${who}, here are my saved places:
+`For my Japan trip with ${who}, here is where we're sleeping each night:
+${baseSummary()}
+
+And my saved places:
 ${savedSummary()}
 
-For each day, suggest 1–2 extra spots within a 10-minute walk of what's already planned: a snack, a unique shop, or a bar. Favor local favorites over tourist chains. Give the exact name and neighborhood so I can find it in Wanderlog. Say if you aren't sure a place still exists.`},
+For each day, suggest 1–2 extra spots within a 10-minute walk of what's already planned: a snack, a unique shop, or a bar. Favor local favorites over tourist chains. Only suggest places you're confident exist; say if you aren't sure one is still open.
+
+Reply with one line per suggestion in exactly this format:
+${OUT_FORMAT}`},
    {t:"Morning brief (use on the trip)", p:
 `Today we're in [CITY] on our Japan trip, ${who}. Our plan in Wanderlog today is:
 [PASTE TODAY'S PLACES]
@@ -581,19 +650,20 @@ function renderWanderlog(){
   const steps = [
    "Create the trip in Wanderlog with your exact dates, then invite your 3 friends as tripmates.",
    "Add each hotel under Lodging (copy addresses from the 🔐 Vault).",
-   "Add flights and train times. Wanderlog can import reservations from email; check its help page for how.",
-   "Day by day, paste in the places from section 1 below.",
-   "Run the 'Build my Wanderlog itinerary' prompt below to fix the order and catch overpacked days.",
+   "Add flights: forward the confirmation emails to Wanderlog, or connect Gmail in Wanderlog so it finds them. Train tickets go in by hand.",
+   "On the 🗓️ Plan tab, put your saved places on days and set where you're sleeping each night.",
+   "Open Wanderlog's AI assistant and paste the 'Check and finish my plan' prompt (section 2). Fix your days here if it suggests changes.",
+   "Then copy each day from section 1 (📋 Copy for Wanderlog AI) and paste it into the AI, one day at a time. If it can't find a place, search the Japanese name and add it by hand.",
    "Before you fly, download offline maps (Google Maps offline areas plus Wanderlog's offline option if your plan has it)."
   ];
   $("#wlSteps").innerHTML = steps.map((s,i)=>`<li><span class="tag Tokyo">${i+1}</span><span>${esc(s)}</span></li>`).join("");
-  const items = savedItems();
-  let h = "";
-  const days = [...new Set(items.map(x=>x.s.day||""))].sort((a,b)=>(parseInt(a,10)||999)-(parseInt(b,10)||999));
-  if(!items.length) h = `<div class="empty">Save places first, then they'll show up here by day.</div>`;
-  days.forEach(d=>{
-    const list = items.filter(x=>String(x.s.day||"")===String(d)).map(x=>placeLine(x.it)).join("\n");
-    h += `<h4 style="margin:10px 0 4px">${d?esc(dayLabel(d)):"Not scheduled yet"}</h4><pre class="prompt">${esc(list)}</pre><button class="btn small ghost" data-act="copy" data-text="${esc(list)}">📋 Copy</button>`;
+  const g = groupedDays();
+  let h = g.length ? "" : `<div class="empty">Save places first, then they'll show up here by day.</div>`;
+  g.forEach(({d,list})=>{
+    const ai = dayPrompt(d, list);
+    const lines = list.map(x=>placeLine(x.it, true)).join("\n");
+    h += `<h4 style="margin:10px 0 4px">${d?esc(dayLabel(d))+(baseOf(d)?` <span class="note">· sleeping in ${esc(baseOf(d))}</span>`:""):"Not scheduled yet"}</h4><pre class="prompt">${esc(ai)}</pre>
+      <div class="acts row" style="gap:6px"><button class="btn small" data-act="copy" data-text="${esc(ai)}">📋 Copy for Wanderlog AI</button><button class="btn small ghost" data-act="copy" data-text="${esc(lines)}">📋 Copy list with map links</button></div>`;
   });
   $("#wlDays").innerHTML = h;
   $("#wlPrompts").innerHTML = prompts().map(p=>`<h4 style="margin:12px 0 4px">${esc(p.t)}</h4><pre class="prompt">${esc(p.p)}</pre><button class="btn small" data-act="copy" data-text="${esc(p.p)}">📋 Copy prompt</button>`).join("");
@@ -639,22 +709,29 @@ document.addEventListener("click", async e=>{
   const b = e.target.closest("[data-act]"); if(!b || b.tagName==="SELECT" || b.tagName==="TEXTAREA" || b.type==="checkbox") return;
   const id = b.dataset.id, act = b.dataset.act;
   if(act==="toggle"){ if(isSaved(id)){ S.saved[id]={...S.saved[id], del:1, u:now()}; toast("Removed"); } else { S.saved[id]={day:"",note:"",u:now(),by:S.settings.name||""}; toast("Saved 💖"); } save(); render(current()); }
+  if(act==="moveUp" || act==="moveDown"){ moveStop(id, act==="moveUp"?-1:1); return; }
   if(act==="delCustom"){ const c=S.custom.find(x=>x.id===id); if(c){ c.del=1; c.u=now(); } if(S.saved[id]){ S.saved[id].del=1; S.saved[id].u=now(); } save(); renderMyTrip(); }
   if(act==="delBook"){ const c=S.bookings.find(x=>x.id===id); if(c){ c.del=1; c.u=now(); save(); renderVault(); } }
   if(act==="delCheck"){ const c=S.checklist.find(x=>x.id===id); if(c){ c.del=1; c.u=now(); save(); renderVault(); } }
   if(act==="addCheck"){ const v=$("#newCheck").value.trim(); if(v){ S.checklist.push({id:uid(),t:v,done:false,u:now()}); $("#newCheck").value=""; save(); renderVault(); } }
   if(act==="copy"){ copyText(b.dataset.text||""); }
-  if(act==="exportCopy"){ copyText(JSON.stringify(S)); }
-  if(act==="exportFile" && window.self!==window.top){ copyText(JSON.stringify(S)); toast("Preview can't download. Backup copied; paste it into a note."); return; }
-  if(act==="exportFile"){ try{ const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="lily-japan-backup-"+new Date().toISOString().slice(0,10)+".json"; document.body.appendChild(a); a.click(); a.remove(); toast("Backup downloaded"); }catch(_){ copyText(JSON.stringify(S)); } }
-  if(act==="shareLink"){ const ids=Object.keys(S.saved).filter(isSaved).filter(i=>!i.startsWith("c-")); if(!ids.length){ toast("Save some places first"); return; } copyText(location.href.split("#")[0]+"#add-"+ids.join("-").replace(/[^a-z0-9-]/gi,"")); }
+  if(act==="exportCopy"){ copyText(JSON.stringify(S)); markBackedUp(); }
+  if(act==="exportFile" && window.self!==window.top){ copyText(JSON.stringify(S)); markBackedUp(); toast("Preview can't download. Backup copied; paste it into a note."); return; }
+  if(act==="exportFile"){ try{ const blob=new Blob([JSON.stringify(S,null,1)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="lily-japan-backup-"+new Date().toISOString().slice(0,10)+".json"; document.body.appendChild(a); a.click(); a.remove(); markBackedUp(); toast("Backup downloaded"); }catch(_){ copyText(JSON.stringify(S)); } }
+  if(act==="shareLink"){
+    const ids=Object.keys(S.saved).filter(isSaved).filter(i=>!i.startsWith("c-"));
+    // her own places travel inside the link too, so friends get them
+    const cust=live(S.custom).filter(c=>isSaved(c.id)).map(c=>{ const o={}; SHARE_FIELDS.forEach(k=>{ if(c[k]) o[k]=c[k]; }); return o; });
+    if(!ids.length && !cust.length){ toast("Save some places first"); return; }
+    copyText(location.href.split("#")[0]+"#add-"+ids.join("-").replace(/[^a-z0-9-]/gi,"")+(cust.length?"~"+b64enc(JSON.stringify(cust)):""));
+  }
   if(act==="genCode"){ S.settings.code="lily-"+uid()+uid(); save(); $("#syncCode").value=S.settings.code; toast("New code made. Share it with your friends."); }
   if(act==="push" || act==="pull"){
     const url=S.settings.syncUrl, code=S.settings.code, st=$("#syncStatus");
     if(!url || !code || code.length<8){ st.textContent="Add the Apps Script URL and a trip code (8+ characters) first."; return; }
     st.textContent = act==="push" ? "Sending…" : "Getting…";
     try{
-      const r = await fetch(url+(url.includes("?")?"&":"?")+"code="+encodeURIComponent(code)); const remote = await r.json();
+      const r = await fetch(url+(url.includes("?")?"&":"?")+"code="+encodeURIComponent(code)); const remote = await r.json(); if(remote && remote.error) throw new Error(remote.error);
       const n = mergeIn(remote);
       if(act==="push"){ const p = await fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({code,data:syncable()})}); const j=await p.json(); if(!j.ok) throw new Error(j.error||"save failed"); st.textContent="Sent ✓ "+new Date().toLocaleTimeString()+(n?` (also pulled in ${n} group changes)`:""); }
       else st.textContent = "Up to date ✓ "+n+" changes pulled in at "+new Date().toLocaleTimeString();
@@ -668,12 +745,32 @@ $("#importFile").addEventListener("change", e=>{
   rd.readAsText(f); e.target.value="";
 });
 
-// share link import: #add-id1-id2 (ids contain a dash, so split on known ids)
+// share link import: #add-id1-id2~<her own places as base64 JSON> (ids contain a dash, so match on known ids)
+const SHARE_FIELDS = ["id","name","ja","city","cat","area","addr","link","desc"];
+function b64enc(s){ return btoa(unescape(encodeURIComponent(s))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,""); }
+function b64dec(s){ s=s.replace(/-/g,"+").replace(/_/g,"/"); while(s.length%4) s+="="; return decodeURIComponent(escape(atob(s))); }
+function importShared(enc){
+  let list; try{ list=JSON.parse(b64dec(enc)); }catch(_){ return 0; }
+  if(!Array.isArray(list)) return 0; let n=0;
+  list.slice(0,200).forEach(r=>{
+    if(!r || typeof r!=="object" || !/^c-[a-z0-9]{4,20}$/.test(r.id) || typeof r.name!=="string" || !r.name.trim()) return;
+    if(S.custom.some(c=>c.id===r.id && !c.del)){ if(!isSaved(r.id)){ S.saved[r.id]={day:"",note:"Shared by a friend",u:now(),by:""}; n++; } return; }
+    const it={id:r.id, custom:true, u:now(), price:"", tags:"my pick"};
+    SHARE_FIELDS.forEach(k=>{ if(k!=="id") it[k]=String(r[k]||"").slice(0,500); });
+    if(!["Tokyo","Kyoto","Osaka","Anywhere"].includes(it.city)) it.city="Anywhere";
+    if(!CATS.includes(it.cat)) it.cat="Do";
+    if(it.link && !/^https?:\/\//i.test(it.link)) it.link="";
+    S.custom=S.custom.filter(c=>c.id!==r.id); S.custom.push(it);
+    S.saved[r.id]={day:"",note:"Shared by a friend",u:now(),by:""}; n++;
+  });
+  return n;
+}
 function handleHash(){
   const h=location.hash.slice(1);
   if(h.startsWith("add-")){
-    const s=h.slice(4); let n=0;
+    const parts=h.slice(4).split("~"), s=parts[0]; let n=0;
     G.forEach(it=>{ if(("-"+s+"-").includes("-"+it.id+"-") && !isSaved(it.id)){ S.saved[it.id]={day:"",note:"Shared by a friend",u:now(),by:""}; n++; } });
+    if(parts[1]) n+=importShared(parts[1]);
     save(); toast(n?`Added ${n} places from a friend 💖`:"You already have those"); try{history.replaceState(null,"","#mytrip");}catch(_){}; showTab("mytrip"); return true;
   }
   const t=document.querySelector(`nav button[data-tab="${h}"]`); if(t){ showTab(h); return true; } return false;
@@ -682,6 +779,7 @@ function convert(){ const y=parseFloat($("#yen").value), r=parseFloat($("#rate")
 function current(){ const b=document.querySelector("nav button.on"); return b?b.dataset.tab:"explore"; }
 function render(name){ ({explore:renderExplore,mytrip:renderMyTrip,plan:renderPlan,wanderlog:renderWanderlog,knives:renderKnives,vault:renderVault,tips:()=>{ $("#rate").value=S.settings.rate||""; convert(); },hotels:()=>{}}[name]||(()=>{}))(); }
 if(!handleHash()) renderExplore();
+if(needsBackup()) setTimeout(()=>toast("Time for a backup: My Trip → Download backup"), 1500);
 window.addEventListener("hashchange", handleHash);
 if("serviceWorker" in navigator && location.protocol==="https:" && !/claude/.test(location.host)){ navigator.serviceWorker.register("sw.js").catch(()=>{}); }
 })();
